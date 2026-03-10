@@ -1,0 +1,11 @@
+{
+  "supabase_url": "https://ocjgtbeswwprayuexwrf.supabase.co",
+  "supabase_anon_key": "sb_publishable_7Vlpv59ZPtU4Fkcvsmxigg_-QXO63yX",
+  "gemini_model": "gemini-2.0-flash",
+  "app_version_minima": "1.0.0",
+  "manutencao": false,
+  "mensagem_manutencao": "",
+  "tablet_layout": true,
+  "beta_ativo": true,
+  "ambiente": "beta_interno"
+}
