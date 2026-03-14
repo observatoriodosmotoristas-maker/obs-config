@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observatório — Painel Administrativo</title>
+<style>
+  :root {
+    --bg: #020B18; --bg1: #0A1628; --bg2: #0F2040; --bg3: #1E3A5F;
+    --azul: #1D4ED8; --azul2: #3B82F6; --azul3: #60A5FA;
+    --verde: #10B981; --vermelho: #EF4444; --amarelo: #F59E0B;
+    --roxo: #8B5CF6; --rosa: #EC4899;
+    --txt: #F1F5F9; --txt2: #94A3B8; --txt3: #475569; --txt4: #1E293B;
+    --borda: #0F2040;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--txt); font-family: 'SF Mono', 'Fira Code', monospace; min-height: 100vh; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg1); }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+
+  /* LOGIN */
+  #login { display:flex; align-items:center; justify-content:center; min-height:100vh; flex-direction:column; gap:24px; }
+  .login-box { background: var(--bg1); border: 1px solid var(--bg3); border-radius: 16px; padding: 40px; width: 360px; }
+  .login-logo { font-size: 48px; text-align: center; margin-bottom: 8px; }
+  .login-titulo { font-size: 18px; font-weight: 800; color: var(--txt); text-align: center; letter-spacing: 2px; margin-bottom: 4px; }
+  .login-sub { font-size: 11px; color: var(--azul3); text-align: center; letter-spacing: 2px; margin-bottom: 32px; text-transform: uppercase; }
+  .login-input { width: 100%; background: var(--bg2); border: 1px solid var(--borda); border-radius: 8px; padding: 12px 16px; color: var(--txt); font-size: 14px; font-family: inherit; outline: none; margin-bottom: 12px; transition: border .2s; }
+  .login-input:focus { border-color: var(--azul2); }
+  .login-btn { width: 100%; background: var(--azul); border: none; border-radius: 8px; padding: 14px; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; letter-spacing: 1px; transition: background .2s; }
+  .login-btn:hover { background: var(--azul2); }
+  .login-erro { color: var(--vermelho); font-size: 12px; text-align: center; margin-top: 8px; }
+
+  /* LAYOUT PRINCIPAL */
+  #app { display: none; }
+  .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 220px; background: var(--bg1); border-right: 1px solid var(--borda); display: flex; flex-direction: column; z-index: 100; }
+  .sidebar-logo { padding: 24px 20px 16px; border-bottom: 1px solid var(--borda); }
+  .sidebar-logo-text { font-size: 14px; font-weight: 800; color: var(--txt); letter-spacing: 2px; }
+  .sidebar-logo-sub { font-size: 9px; color: var(--azul3); letter-spacing: 2px; margin-top: 2px; text-transform: uppercase; }
+  .sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 0; }
+  .nav-section { padding: 8px 20px 4px; font-size: 9px; color: var(--txt3); letter-spacing: 2px; text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; font-size: 12px; color: var(--txt3); transition: all .2s; border-left: 2px solid transparent; }
+  .nav-item:hover { color: var(--txt2); background: var(--bg2); }
+  .nav-item.ativo { color: var(--azul3); background: var(--azul) + '15'; border-left-color: var(--azul2); background: rgba(29,78,216,.1); }
+  .nav-item .nav-icon { font-size: 14px; width: 20px; text-align: center; }
+  .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--borda); }
+  .logout-btn { width: 100%; background: transparent; border: 1px solid var(--borda); border-radius: 6px; padding: 8px; color: var(--txt3); font-size: 11px; cursor: pointer; font-family: inherit; transition: all .2s; }
+  .logout-btn:hover { border-color: var(--vermelho); color: var(--vermelho); }
+
+  .main { margin-left: 220px; padding: 28px 32px; min-height: 100vh; }
+  .page { display: none; }
+  .page.ativa { display: block; }
+  .page-titulo { font-size: 22px; font-weight: 800; color: var(--txt); letter-spacing: .5px; margin-bottom: 4px; }
+  .page-sub { font-size: 11px; color: var(--azul3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+
+  /* CARDS */
+  .card { background: var(--bg1); border: 1px solid var(--borda); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .card-titulo { font-size: 10px; color: var(--txt3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+
+  /* KPI */
+  .kpi { background: var(--bg2); border-radius: 10px; padding: 16px; }
+  .kpi-label { font-size: 10px; color: var(--txt3); letter-spacing: 1px; margin-bottom: 6px; }
+  .kpi-valor { font-size: 24px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .kpi-sub { font-size: 10px; color: var(--txt3); }
+
+  /* PILL / BADGE */
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; border: 1px solid; }
+  .tag-verde { background: rgba(16,185,129,.15); color: var(--verde); border-color: rgba(16,185,129,.3); }
+  .tag-azul { background: rgba(59,130,246,.15); color: var(--azul3); border-color: rgba(59,130,246,.3); }
+  .tag-amarelo { background: rgba(245,158,11,.15); color: var(--amarelo); border-color: rgba(245,158,11,.3); }
+  .tag-vermelho { background: rgba(239,68,68,.15); color: var(--vermelho); border-color: rgba(239,68,68,.3); }
+  .tag-roxo { background: rgba(139,92,246,.15); color: var(--roxo); border-color: rgba(139,92,246,.3); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab-btn { padding: 7px 14px; border-radius: 7px; font-size: 11px; font-weight: 600; cursor: pointer; background: var(--bg1); border: 1px solid var(--borda); color: var(--txt3); font-family: inherit; transition: all .2s; }
+  .tab-btn.ativo { background: var(--azul); border-color: var(--azul); color: #fff; }
+  .tab-btn:hover:not(.ativo) { border-color: var(--azul2); color: var(--txt2); }
+  .tab-panel { display: none; }
+  .tab-panel.ativo { display: block; }
+
+  /* BARRA */
+  .barra-fundo { height: 6px; background: var(--bg2); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .barra-fill { height: 100%; border-radius: 3px; transition: width .5s; }
+
+  /* TABELA */
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th { padding: 8px 12px; text-align: left; color: var(--txt3); font-weight: 600; border-bottom: 1px solid var(--borda); background: var(--bg2); white-space: nowrap; font-size: 10px; letter-spacing: 1px; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--bg2); color: var(--txt2); }
+  tr:hover td { background: var(--bg2); }
+  .mono { font-family: 'SF Mono', monospace; }
+
+  /* IA STATUS */
+  .ia-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+  .ia-item { background: var(--bg2); border-radius: 8px; padding: 12px; border-left: 3px solid; }
+  .ia-nome { font-size: 12px; font-weight: 700; color: var(--txt); margin-bottom: 4px; }
+  .ia-motor { font-size: 10px; color: var(--txt3); margin-bottom: 6px; }
+  .ia-status { font-size: 10px; font-weight: 700; }
+
+  /* GATILHO */
+  .gatilho { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid; transition: all .3s; }
+  .gatilho-ok { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.3); }
+  .gatilho-aviso { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.3); }
+  .gatilho-urgente { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.3); }
+  .gatilho-pendente { background: var(--bg2); border-color: var(--borda); opacity: .5; }
+
+  /* INPUT */
+  .input { background: var(--bg2); border: 1px solid var(--borda); border-radius: 6px; padding: 8px 12px; color: var(--txt); font-size: 13px; font-family: inherit; outline: none; transition: border .2s; }
+  .input:focus { border-color: var(--azul2); }
+  .btn { padding: 8px 16px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all .2s; border: 1px solid; }
+  .btn-primary { background: var(--azul); border-color: var(--azul); color: #fff; }
+  .btn-primary:hover { background: var(--azul2); }
+  .btn-ghost { background: transparent; border-color: var(--borda); color: var(--txt2); }
+  .btn-ghost:hover { border-color: var(--azul2); color: var(--azul3); }
+
+  /* ALERTA */
+  .alerta { padding: 12px 16px; border-radius: 8px; border-left: 3px solid; margin-bottom: 12px; font-size: 12px; }
+  .alerta-info { background: rgba(29,78,216,.1); border-color: var(--azul2); color: var(--azul3); }
+  .alerta-aviso { background: rgba(245,158,11,.1); border-color: var(--amarelo); color: var(--amarelo); }
+  .alerta-erro { background: rgba(239,68,68,.1); border-color: var(--vermelho); color: var(--vermelho); }
+  .alerta-ok { background: rgba(16,185,129,.1); border-color: var(--verde); color: var(--verde); }
+
+  /* KELLY */
+  .laudo-item { background: var(--bg2); border-radius: 10px; padding: 16px; margin-bottom: 12px; border-left: 3px solid var(--roxo); }
+  .laudo-tipo { font-size: 10px; color: var(--roxo); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .laudo-titulo { font-size: 14px; font-weight: 700; color: var(--txt); margin-bottom: 4px; }
+  .laudo-meta { font-size: 11px; color: var(--txt3); margin-bottom: 12px; }
+  .laudo-acoes { display: flex; gap: 8px; }
+
+  /* PRINT */
+  @media print {
+    .sidebar, .tabs, .btn, .nav-item { display: none !important; }
+    .main { margin-left: 0; padding: 0; }
+    .card { break-inside: avoid; }
+  }
+
+  /* SEMÁFORO */
+  .semaforo { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  @keyframes pulso { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .pulso { animation: pulso 1.5s infinite; }
+
+  /* TIMELINE */
+  .timeline { display: flex; position: relative; overflow-x: auto; padding-bottom: 12px; gap: 0; }
+  .timeline::before { content:''; position:absolute; top:14px; left:40px; right:40px; height:2px; background:var(--bg3); }
+  .tl-item { flex:1; display:flex; flex-direction:column; align-items:center; min-width:80px; position:relative; }
+  .tl-dot { width:28px; height:28px; border-radius:50%; border:3px solid; z-index:1; margin-bottom:8px; transition:all .3s; }
+  .tl-label { font-size:10px; font-weight:700; font-family:monospace; margin-bottom:4px; text-align:center; }
+  .tl-desc { font-size:9px; color:var(--txt3); text-align:center; line-height:1.4; white-space:pre-line; }
+
+  /* API MONITOR */
+  .api-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--bg2); }
+  .api-nome { font-size:13px; font-weight:700; color:var(--txt); width:100px; }
+  .api-barra { flex:1; }
+  .api-nums { font-size:11px; color:var(--txt3); width:120px; text-align:right; font-family:monospace; }
+  .api-alerta { font-size:10px; font-weight:700; width:80px; text-align:center; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-box">
+    <div class="login-logo">◉</div>
+    <div class="login-titulo">OBSERVATÓRIO</div>
+    <div class="login-sub">Painel Administrativo</div>
+    <input class="login-input" type="text" id="login-user" placeholder="Usuário" autocomplete="off">
+    <input class="login-input" type="password" id="login-pass" placeholder="Senha" onkeydown="if(event.key==='Enter')autenticar()">
+    <button class="login-btn" onclick="autenticar()">ENTRAR →</button>
+    <div class="login-erro" id="login-erro"></div>
+  </div>
+  <div style="font-size:10px;color:var(--txt3);letter-spacing:1px">ACESSO RESTRITO — KELLY & FREDERICO</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div style="font-size:24px;margin-bottom:6px">◉</div>
+    <div class="sidebar-logo-text">OBSERVATÓRIO</div>
+    <div class="sidebar-logo-sub">Painel Admin</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Operacional</div>
+    <div class="nav-item ativo" onclick="mostrarPagina('saude')">
+      <span class="nav-icon">◉</span> Saúde do Negócio
+    </div>
+    <div class="nav-item" onclick="mostrarPagina('ias')">
+      <span class="nav-icon">🤖</span> Monitor de IAs
+    </div>
+    <div class="nav-item" onclick="mostrarPagina('banco')">
+      <span class="nav-icon">📊</span> Banco de Dados
+    </div>
+
+    <div class="nav-section">Estratégico</div>
+    <div class="nav-item" onclick="mostrarPagina('infra')">
+      <span class="nav-icon">⚙️</span> Infraestrutura
+    </div>
+    <div class="nav-item" onclick="mostrarPagina('fases')">
+      <span class="nav-icon">◈</span> Fases & Gatilhos
+    </div>
+    <div class="nav-item" onclick="mostrarPagina('valuation')">
+      <span class="nav-icon">$</span> Valuation
+    </div>
+
+    <div class="nav-section">Comercial</div>
+    <div class="nav-item" onclick="mostrarPagina('crm')">
+      <span class="nav-icon">◫</span> CRM B2B
+    </div>
+    <div class="nav-item" onclick="mostrarPagina('interessados')">
+      <span class="nav-icon">▲</span> Interessados
+    </div>
+    <div class="nav-item" onclick="mostrarPagina('receita')">
+      <span class="nav-icon">💰</span> Receita
+    </div>
+
+    <div class="nav-section">Editorial</div>
+    <div class="nav-item" onclick="mostrarPagina('kelly')">
+      <span class="nav-icon">⚖️</span> Painel Kelly
+    </div>
+    <div class="nav-item" onclick="mostrarPagina('editor')">
+      <span class="nav-icon">✍️</span> Omni-Editor
+    </div>
+    <div class="nav-item" onclick="mostrarPagina('relatorios')">
+      <span class="nav-icon">📄</span> Relatórios
+    </div>
+
+    <div class="nav-section">Sinais</div>
+    <div class="nav-item" onclick="mostrarPagina('sinais')">
+      <span class="nav-icon">📡</span> Sinais Externos
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div style="font-size:10px;color:var(--txt3);margin-bottom:8px;text-align:center">
+      <span class="semaforo pulso" style="background:var(--verde)"></span>
+      IAs rodando • a cada 6h
+    </div>
+    <button class="logout-btn" onclick="logout()">Sair</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ═══════════════════════════════════ SAÚDE DO NEGÓCIO -->
+<div class="page ativa" id="page-saude">
+  <div class="page-titulo">Saúde do Negócio</div>
+  <div class="page-sub">Visão executiva em tempo real</div>
+
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="kpi">
+      <div class="kpi-label">ASSINANTES ATIVOS</div>
+      <div class="kpi-valor" style="color:var(--azul3)" id="kpi-ass">—</div>
+      <div class="kpi-sub">Meta fase 1: 116</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">MRR</div>
+      <div class="kpi-valor" style="color:var(--verde)" id="kpi-mrr">—</div>
+      <div class="kpi-sub">Receita mensal recorrente</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">CORRIDAS COLETADAS</div>
+      <div class="kpi-valor" style="color:var(--txt)" id="kpi-corridas">—</div>
+      <div class="kpi-sub">Total no banco</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">REGISTROS IAs</div>
+      <div class="kpi-valor" style="color:var(--amarelo)" id="kpi-registros">378</div>
+      <div class="kpi-sub">Última execução</div>
+    </div>
+  </div>
+
+  <!-- Semáforo estratégico -->
+  <div class="card">
+    <div class="card-titulo">Semáforo Estratégico</div>
+    <div class="grid3">
+      <div id="sem-breakeven" class="kpi" style="border-left:3px solid var(--vermelho)">
+        <div style="font-size:20px;margin-bottom:6px">🔴</div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt)">Breakeven</div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:4px">116 assinantes necessários</div>
+      </div>
+      <div class="kpi" style="border-left:3px solid var(--amarelo)">
+        <div style="font-size:20px;margin-bottom:6px">⚠️</div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt)">Gemini Free</div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:4px">Migrar aos 30 assinantes</div>
+      </div>
+      <div class="kpi" style="border-left:3px solid var(--verde)">
+        <div style="font-size:20px;margin-bottom:6px">✅</div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt)">IAs Ativas</div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:4px">41 IAs rodando a cada 6h</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progresso fase 1 -->
+  <div class="card">
+    <div class="card-titulo">Fase Atual — Validação</div>
+    <div style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:12px;color:var(--txt2)">Progresso para próxima fase</span>
+        <span style="font-size:12px;font-weight:700;color:var(--azul3)" id="pct-fase">0%</span>
+      </div>
+      <div class="barra-fundo" style="height:10px">
+        <div class="barra-fill" id="barra-fase" style="width:0%;background:var(--azul)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--txt3)">
+        <span>Agora</span><span>116 ass. = Breakeven</span>
+      </div>
+    </div>
+    <div id="checklist-fase1">
+      <div style="font-size:11px;color:var(--txt3)">Carregando checklist...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ MONITOR IAs -->
+<div class="page" id="page-ias">
+  <div class="page-titulo">Monitor de IAs</div>
+  <div class="page-sub">41 IAs • status e uso de APIs gratuitas</div>
+
+  <!-- API Usage -->
+  <div class="card">
+    <div class="card-titulo">Uso das APIs Gratuitas — Limites e Alertas</div>
+    <div id="api-monitor">
+      <div class="api-row">
+        <div class="api-nome">Gemini</div>
+        <div class="api-barra">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:3px">
+            <span>1.500 req/dia</span><span id="gemini-pct">—</span>
+          </div>
+          <div class="barra-fundo"><div class="barra-fill" id="gemini-barra" style="width:15%;background:var(--verde)"></div></div>
+        </div>
+        <div class="api-nums" id="gemini-nums">~225 / 1500</div>
+        <div class="api-alerta"><span class="pill tag-verde">OK</span></div>
+      </div>
+      <div class="api-row">
+        <div class="api-nome">Groq</div>
+        <div class="api-barra">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:3px">
+            <span>14.400 req/dia</span><span id="groq-pct">—</span>
+          </div>
+          <div class="barra-fundo"><div class="barra-fill" id="groq-barra" style="width:8%;background:var(--verde)"></div></div>
+        </div>
+        <div class="api-nums">~1.150 / 14400</div>
+        <div class="api-alerta"><span class="pill tag-verde">OK</span></div>
+      </div>
+      <div class="api-row">
+        <div class="api-nome">Cohere</div>
+        <div class="api-barra">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:3px">
+            <span>1.000 req/mês</span><span>—</span>
+          </div>
+          <div class="barra-fundo"><div class="barra-fill" style="width:9%;background:var(--verde)"></div></div>
+        </div>
+        <div class="api-nums">~87 / 1000</div>
+        <div class="api-alerta"><span class="pill tag-verde">OK</span></div>
+      </div>
+      <div class="api-row">
+        <div class="api-nome">Supabase</div>
+        <div class="api-barra">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:3px">
+            <span>500MB banco</span><span>—</span>
+          </div>
+          <div class="barra-fundo"><div class="barra-fill" style="width:1%;background:var(--verde)"></div></div>
+        </div>
+        <div class="api-nums">~5MB / 500MB</div>
+        <div class="api-alerta"><span class="pill tag-verde">OK</span></div>
+      </div>
+    </div>
+    <div class="alerta alerta-info" style="margin-top:12px;margin-bottom:0">
+      ⚡ <strong>Próximo gatilho:</strong> Ao atingir 30 assinantes → migrar Gemini para Flash pago (US$9,60/mês). Supabase Pro ($25/mês) ao atingir 50 motoristas.
+    </div>
+  </div>
+
+  <!-- Recomendação de upgrade -->
+  <div class="card">
+    <div class="card-titulo">Recomendação de Upgrade por Rentabilidade</div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th>FAIXA</th><th>ASSINANTES</th><th>AÇÃO</th><th>CUSTO/MÊS</th><th>RECEITA LÍQUIDA</th><th>MARGEM</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span class="pill tag-verde">Stack Gratuita</span></td><td class="mono">0 – 116</td><td>Manter free tiers</td><td class="mono" style="color:var(--verde)">R$0</td><td class="mono">R$0 – R$245</td><td class="mono" style="color:var(--vermelho)">Negativa</td></tr>
+          <tr><td><span class="pill tag-azul">Gemini Flash</span></td><td class="mono">116 – 480</td><td>Migrar Gemini Flash</td><td class="mono" style="color:var(--amarelo)">R$50</td><td class="mono">R$245 – R$1.014</td><td class="mono" style="color:var(--verde)">Positiva</td></tr>
+          <tr><td><span class="pill tag-roxo">Stack Híbrida</span></td><td class="mono">480 – 1.830</td><td>+ Claude Sonnet</td><td class="mono" style="color:var(--amarelo)">R$770</td><td class="mono">R$1.014 – R$3.867</td><td class="mono" style="color:var(--verde)">Boa</td></tr>
+          <tr><td><span class="pill" style="background:rgba(236,72,153,.15);color:#EC4899;border-color:rgba(236,72,153,.3)">Dedicada</span></td><td class="mono">1.830+</td><td>Fine-tuning próprio</td><td class="mono" style="color:var(--amarelo)">R$1.820</td><td class="mono">R$3.867+</td><td class="mono" style="color:var(--verde)">Excelente</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- IAs status -->
+  <div class="card">
+    <div class="card-titulo">Status das 41 IAs — Última Execução</div>
+    <div class="ia-grid" id="ia-lista">
+      <!-- populado por JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ BANCO -->
+<div class="page" id="page-banco">
+  <div class="page-titulo">Banco de Dados</div>
+  <div class="page-sub">Supabase • São Paulo • 44 tabelas</div>
+
+  <div class="card">
+    <div class="card-titulo">Crescimento por Tabela — Execuções das IAs</div>
+    <div id="tabelas-banco">
+      <!-- populado por JS -->
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo">Última Execução — 14/03/2026 00:45</div>
+    <div class="grid4">
+      <div class="kpi"><div class="kpi-label">linha_tempo</div><div class="kpi-valor" style="color:var(--azul3)">271</div></div>
+      <div class="kpi"><div class="kpi-label">observacoes</div><div class="kpi-valor" style="color:var(--verde)">35</div></div>
+      <div class="kpi"><div class="kpi-label">fontes_encic.</div><div class="kpi-valor" style="color:var(--amarelo)">47</div></div>
+      <div class="kpi"><div class="kpi-label">indices_pub.</div><div class="kpi-valor" style="color:var(--roxo)">10</div></div>
+    </div>
+    <div class="alerta alerta-ok" style="margin-top:12px;margin-bottom:0">
+      ✅ Total: <strong>378 registros</strong> inseridos na primeira execução completa do v5.0
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ INFRAESTRUTURA -->
+<div class="page" id="page-infra">
+  <div class="page-titulo">Infraestrutura</div>
+  <div class="page-sub">Projeção financeira • stacks de IA • MEI</div>
+
+  <div class="tabs">
+    <button class="tab-btn ativo" onclick="trocarTab('infra','projecao',this)">📈 Projeção 12 meses</button>
+    <button class="tab-btn" onclick="trocarTab('infra','stack',this)">🤖 Stack de IAs</button>
+    <button class="tab-btn" onclick="trocarTab('infra','gatilhos',this)">⚡ Gatilhos</button>
+    <button class="tab-btn" onclick="trocarTab('infra','contrib',this)">💰 Contribuições</button>
+    <button class="tab-btn" onclick="trocarTab('infra','mei',this)">📋 MEI</button>
+  </div>
+
+  <div class="tab-panel ativo" id="infra-projecao">
+    <div class="grid4" style="margin-bottom:16px">
+      <div class="kpi"><div class="kpi-label">CÂMBIO USD/BRL</div><div class="kpi-valor" style="color:var(--txt)">R$5,20</div></div>
+      <div class="kpi"><div class="kpi-label">PREÇO ASSINATURA</div><div class="kpi-valor" style="color:var(--verde)">R$2,99</div></div>
+      <div class="kpi"><div class="kpi-label">RECEITA LÍQUIDA</div><div class="kpi-valor" style="color:var(--azul3)">R$2,09</div><div class="kpi-sub">após 30% Google Play</div></div>
+      <div class="kpi"><div class="kpi-label">BREAKEVEN</div><div class="kpi-valor" style="color:var(--amarelo)">116 ass.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Projeção Completa — 12 Meses</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th>MÊS</th><th>EVENTO</th><th>ASS.</th><th>REC. LÍQ.</th><th>INFRA R$</th><th>MARGEM</th><th>%</th><th>STACK</th>
+          </tr></thead>
+          <tbody id="tabela-projecao"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="infra-stack">
+    <div id="stacks-container"></div>
+  </div>
+
+  <div class="tab-panel" id="infra-gatilhos">
+    <div id="gatilhos-container"></div>
+  </div>
+
+  <div class="tab-panel" id="infra-contrib">
+    <div class="card">
+      <div class="card-titulo">Simulador de Contribuições</div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;color:var(--txt3);display:block;margin-bottom:8px">Contribuições mensais estimadas</label>
+        <input type="range" min="0" max="3000" step="50" value="0" id="slider-contrib" oninput="atualizarContrib()" style="width:100%;accent-color:var(--verde);margin-bottom:8px">
+        <div style="font-size:32px;font-weight:900;color:var(--verde);font-family:monospace" id="contrib-valor">R$0,00</div>
+      </div>
+      <div class="grid3" id="contrib-kpis"></div>
+      <div id="contrib-info" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="infra-mei">
+    <div class="card">
+      <div class="card-titulo">Enquadramento MEI — Kelly Fonseca</div>
+      <div class="grid3">
+        <div class="kpi"><div class="kpi-label">CNAE PRINCIPAL</div><div class="kpi-valor" style="color:var(--azul3);font-size:18px">6201-5/01</div><div class="kpi-sub">Dev. de programas sob encomenda</div></div>
+        <div class="kpi"><div class="kpi-label">LIMITE ANUAL</div><div class="kpi-valor" style="color:var(--amarelo)">R$81k</div><div class="kpi-sub">R$6.750/mês</div></div>
+        <div class="kpi"><div class="kpi-label">ALÍQUOTA</div><div class="kpi-valor" style="color:var(--verde)">5% ISS</div><div class="kpi-sub">~R$70/mês DAS-MEI</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">Obrigações e Restrições</div>
+      <div id="mei-lista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ FASES -->
+<div class="page" id="page-fases">
+  <div class="page-titulo">Fases & Gatilhos</div>
+  <div class="page-sub">Validação → Tração → Escala → Venda</div>
+  <div id="fases-container"></div>
+</div>
+
+<!-- ═══════════════════════════════════ VALUATION -->
+<div class="page" id="page-valuation">
+  <div class="page-titulo">Valuation</div>
+  <div class="page-sub">Estimativa de valor de mercado</div>
+
+  <div class="grid3" style="margin-bottom:16px">
+    <div class="kpi"><div class="kpi-label">MÚLTIPLO ARR</div><div class="kpi-valor" style="color:var(--azul3)">6×</div><div class="kpi-sub">Setor de dados/SaaS</div></div>
+    <div class="kpi"><div class="kpi-label">VALUATION ATUAL</div><div class="kpi-valor" style="color:var(--verde)">R$0</div><div class="kpi-sub">Pré-receita</div></div>
+    <div class="kpi"><div class="kpi-label">EXIT POTENCIAL</div><div class="kpi-valor" style="color:var(--amarelo)">R$5M–30M</div><div class="kpi-sub">Com escala nacional</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo">Cenários de Exit</div>
+    <div id="exit-cenarios"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo">O Que Aumenta o Valuation</div>
+    <div id="valuation-drivers"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ CRM B2B -->
+<div class="page" id="page-crm">
+  <div class="page-titulo">CRM B2B</div>
+  <div class="page-sub">Propostas • Precificador IA • Valor por Conteúdo</div>
+
+  <div class="tabs">
+    <button class="tab-btn ativo" onclick="trocarTab('crm','propostas',this)">◫ Propostas</button>
+    <button class="tab-btn" onclick="trocarTab('crm','precificador',this)">$ Precificador IA</button>
+    <button class="tab-btn" onclick="trocarTab('crm','conteudo',this)">◈ Valor por Conteúdo</button>
+  </div>
+
+  <div class="tab-panel ativo" id="crm-propostas">
+    <div class="grid4" style="margin-bottom:16px">
+      <div class="kpi"><div class="kpi-label">PIPELINE TOTAL</div><div class="kpi-valor" style="color:var(--azul3)">R$155k</div></div>
+      <div class="kpi"><div class="kpi-label">FECHADO</div><div class="kpi-valor" style="color:var(--verde)">R$58k</div></div>
+      <div class="kpi"><div class="kpi-label">NEGOCIANDO</div><div class="kpi-valor" style="color:var(--amarelo)">2</div></div>
+      <div class="kpi"><div class="kpi-label">EM ANÁLISE</div><div class="kpi-valor" style="color:var(--txt2)">1</div></div>
+    </div>
+    <div class="card" id="propostas-lista"></div>
+  </div>
+
+  <div class="tab-panel" id="crm-precificador">
+    <div class="card">
+      <div class="card-titulo">Calcular Preço para Nova Proposta</div>
+      <div class="grid3" style="margin-bottom:16px">
+        <div>
+          <label style="font-size:11px;color:var(--txt3);display:block;margin-bottom:6px">Segmento</label>
+          <select id="prec-segmento" class="input" style="width:100%" onchange="calcularPreco()">
+            <option value="seguradora">Seguradora</option>
+            <option value="fintech">Fintech</option>
+            <option value="governo">Governo</option>
+            <option value="sindicato">Sindicato</option>
+            <option value="academia">Academia</option>
+            <option value="consultoria">Consultoria</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--txt3);display:block;margin-bottom:6px">Escopo</label>
+          <select id="prec-escopo" class="input" style="width:100%" onchange="calcularPreco()">
+            <option value="relatorio">Relatório agregado</option>
+            <option value="dataset">Dataset anonimizado</option>
+            <option value="dashboard">Dashboard acesso</option>
+            <option value="api">API acesso</option>
+            <option value="indice">Licença de índice</option>
+            <option value="pesquisa">Pesquisa customizada</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--txt3);display:block;margin-bottom:6px">Exclusividade</label>
+          <select id="prec-exclusividade" class="input" style="width:100%" onchange="calcularPreco()">
+            <option value="nenhuma">Nenhuma</option>
+            <option value="setorial">Setorial</option>
+            <option value="regional">Regional</option>
+            <option value="total">Total</option>
+          </select>
+        </div>
+      </div>
+      <div id="prec-resultado"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="crm-conteudo">
+    <div class="card" id="conteudo-roi"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ INTERESSADOS -->
+<div class="page" id="page-interessados">
+  <div class="page-titulo">Mapa de Interessados</div>
+  <div class="page-sub">30 contatos • 12 categorias • funil de parceria</div>
+  <div class="card" id="interessados-lista"></div>
+</div>
+
+<!-- ═══════════════════════════════════ RECEITA -->
+<div class="page" id="page-receita">
+  <div class="page-titulo">Receita Consolidada</div>
+  <div class="page-sub">4 camadas de monetização</div>
+
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="kpi"><div class="kpi-label">ASSINATURAS</div><div class="kpi-valor" style="color:var(--azul3)">R$0</div><div class="kpi-sub">B2C mensal</div></div>
+    <div class="kpi"><div class="kpi-label">B2B ATIVO</div><div class="kpi-valor" style="color:var(--verde)">R$0</div><div class="kpi-sub">Contratos ativos</div></div>
+    <div class="kpi"><div class="kpi-label">PATROCÍNIOS</div><div class="kpi-valor" style="color:var(--amarelo)">R$0</div><div class="kpi-sub">Studio/Piloto</div></div>
+    <div class="kpi"><div class="kpi-label">TOTAL MRR</div><div class="kpi-valor" style="color:var(--txt)">R$0</div><div class="kpi-sub">Receita mensal total</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo">Próximas Ações de Receita — Por Prioridade</div>
+    <div id="acoes-receita"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ KELLY -->
+<div class="page" id="page-kelly">
+  <div class="page-titulo">Painel Kelly</div>
+  <div class="page-sub">Documentos para revisão e assinatura CRP/MG 04/59.263</div>
+
+  <div class="alerta alerta-aviso">
+    ⚠️ <strong>Regra absoluta:</strong> Kelly revisa SEMPRE antes de assinar. Nenhum documento é emitido automaticamente.
+  </div>
+
+  <div class="tabs" style="margin-top:16px">
+    <button class="tab-btn ativo" onclick="trocarTab('kelly','fila',this)">📋 Fila de Revisão</button>
+    <button class="tab-btn" onclick="trocarTab('kelly','tipos',this)">📄 Tipos de Documento</button>
+    <button class="tab-btn" onclick="trocarTab('kelly','laudo-obs06',this)">⚖️ OBS-06</button>
+  </div>
+
+  <div class="tab-panel ativo" id="kelly-fila">
+    <div id="kelly-documentos"></div>
+  </div>
+
+  <div class="tab-panel" id="kelly-tipos">
+    <div class="card">
+      <div class="card-titulo">O Que Kelly Pode Assinar (Resolução CFP 06/2019)</div>
+      <div id="kelly-tipos-lista"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="kelly-laudo-obs06">
+    <div class="card">
+      <div class="card-titulo">OBS-06 — Supressão Filtro de Destino</div>
+      <div class="alerta alerta-info" style="margin-bottom:12px">
+        📍 BH • 08/03/2026 • Evidência fotográfica • Score probatório: 9/10
+      </div>
+      <div style="font-size:13px;color:var(--txt2);line-height:1.8;margin-bottom:16px">
+        <strong style="color:var(--txt)">Hipótese:</strong> A Uber bloqueia algoritmicamente o filtro de destino durante alta demanda, exibindo mensagem falsa atribuindo o bloqueio a outros motoristas.<br><br>
+        <strong style="color:var(--txt)">Tese jurídica:</strong> CDC Art. 37 — publicidade enganosa por omissão de causa real.<br><br>
+        <strong style="color:var(--txt)">Frentes abertas:</strong> PROCON • ANPD • Lei 12.587/12 • CADE<br><br>
+        <strong style="color:var(--txt)">Confiança atual:</strong> 35% (1 relato) → precisa 20+ relatos para 70%+
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="alert('Nota técnica em preparação — aguardando volume de relatos')">Gerar Nota Técnica PROCON</button>
+        <button class="btn btn-ghost" onclick="window.print()">🖨️ Imprimir Dossiê</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ OMNI-EDITOR -->
+<div class="page" id="page-editor">
+  <div class="page-titulo">Omni-Editor</div>
+  <div class="page-sub">Olheiro → Semente Literária → Validação Kelly</div>
+
+  <div class="card">
+    <div class="card-titulo">Fluxo Editorial</div>
+    <div style="display:flex;gap:0;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:20px">
+      <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;text-align:center;min-width:140px">
+        <div style="font-size:18px;margin-bottom:4px">🔍</div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt)">Olheiro</div>
+        <div style="font-size:10px;color:var(--txt3)">Detecta anomalia no banco</div>
+      </div>
+      <div style="font-size:20px;color:var(--txt3)">→</div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;text-align:center;min-width:140px">
+        <div style="font-size:18px;margin-bottom:4px">🌱</div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt)">Semente</div>
+        <div style="font-size:10px;color:var(--txt3)">Editora propõe pauta</div>
+      </div>
+      <div style="font-size:20px;color:var(--txt3)">→</div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;text-align:center;min-width:140px">
+        <div style="font-size:18px;margin-bottom:4px">✅</div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt)">Kelly Valida</div>
+        <div style="font-size:10px;color:var(--txt3)">Revisão e aprovação</div>
+      </div>
+      <div style="font-size:20px;color:var(--txt3)">→</div>
+      <div style="background:rgba(29,78,216,.15);border-radius:8px;padding:12px 16px;text-align:center;min-width:140px;border:1px solid var(--azul)">
+        <div style="font-size:18px;margin-bottom:4px">📺</div>
+        <div style="font-size:12px;font-weight:700;color:var(--azul3)">Studio Feed</div>
+        <div style="font-size:10px;color:var(--txt3)">Rafael e Camila</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo">Segmentação por Categoria de Serviço</div>
+    <div class="grid2">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:8px">Uber</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span class="pill tag-azul">UberX</span>
+          <span class="pill tag-azul">Comfort</span>
+          <span class="pill tag-azul">Black</span>
+          <span class="pill tag-azul">Moto</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:8px">99</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span class="pill tag-verde">Pop</span>
+          <span class="pill tag-verde">Comfort</span>
+          <span class="pill tag-verde">Negocia</span>
+          <span class="pill tag-verde">Moto</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-titulo">Pautas em Desenvolvimento</div>
+    <div id="pautas-editor"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ RELATÓRIOS -->
+<div class="page" id="page-relatorios">
+  <div class="page-titulo">Relatórios e Documentos</div>
+  <div class="page-sub">Visualizar • Imprimir • Exportar</div>
+
+  <div class="card">
+    <div class="card-titulo">Documentos Disponíveis</div>
+    <div id="relatorios-lista"></div>
+  </div>
+
+  <div id="relatorio-preview" class="card" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div class="card-titulo" style="margin-bottom:0">Preview do Documento</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
+        <button class="btn btn-ghost" onclick="fecharPreview()">✕ Fechar</button>
+      </div>
+    </div>
+    <div id="relatorio-conteudo" style="font-size:13px;color:var(--txt2);line-height:1.8;white-space:pre-wrap"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ SINAIS -->
+<div class="page" id="page-sinais">
+  <div class="page-titulo">Sinais Externos</div>
+  <div class="page-sub">Regulação • Academia • Mídia • Plataformas</div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-titulo">🏛️ Movimentação Regulatória</div>
+      <div id="sinais-regulatorio"></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">📰 Mídia & Imprensa</div>
+      <div id="sinais-midia"></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">🎓 Academia</div>
+      <div id="sinais-academia"></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">📱 Plataformas</div>
+      <div id="sinais-plataformas"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://ocjgtbeswwprayuexwrf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jamd0YmVzd3dwcmF5dWV4d3JmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzAyNzE0OCwiZXhwIjoyMDg4NjAzMTQ4fQ.MpFPRgaBkYhXLZ8bV81VGa_UZIEhk2r2wSr8H7O5sNw';
+const CAMBIO = 5.20;
+const PRECO = 2.99;
+const REC_LIQ_UNIT = PRECO * 0.70;
+
+// ═══════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════
+const USUARIOS = { 'kelly': 'obs@kelly2026', 'frederico': 'obs@fred2026', 'admin': 'observatorio@2026' };
+
+function autenticar() {
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  if (USUARIOS[u] === p) {
+    sessionStorage.setItem('obs_auth', u);
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    inicializar();
+  } else {
+    document.getElementById('login-erro').textContent = 'Usuário ou senha incorretos';
+    setTimeout(() => document.getElementById('login-erro').textContent = '', 3000);
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('obs_auth');
+  location.reload();
+}
+
+// Verificar sessão
+window.onload = () => {
+  if (sessionStorage.getItem('obs_auth')) {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    inicializar();
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════════════════════
+function mostrarPagina(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('ativa'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('ativo'));
+  document.getElementById('page-' + id).classList.add('ativa');
+  event.currentTarget.classList.add('ativo');
+}
+
+function trocarTab(grupo, id, btn) {
+  document.querySelectorAll('#page-' + grupo + ' .tab-panel').forEach(p => p.classList.remove('ativo'));
+  document.querySelectorAll('#page-' + grupo + ' .tab-btn').forEach(b => b.classList.remove('ativo'));
+  document.getElementById(grupo + '-' + id).classList.add('ativo');
+  btn.classList.add('ativo');
+}
+
+// ═══════════════════════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════════════════════
+async function sbQuery(tabela, params = '') {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${tabela}?${params}`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    return r.ok ? await r.json() : [];
+  } catch { return []; }
+}
+
+// ═══════════════════════════════════════════════════════
+// DADOS
+// ═══════════════════════════════════════════════════════
+const brl = v => `R$${Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}${v<0?' (neg)':''}`;
+const usd = v => `US$${v.toFixed(2)}`;
+const pct = v => `${v.toFixed(1)}%`;
+
+const PROJECAO = [
+  {mes:1,  ass:30,   evento:'Beta — boca a boca',              ia:9.6,  db:25, comp:7,  extra:5},
+  {mes:2,  ass:80,   evento:'Vídeo manifesto + WhatsApp',       ia:9.6,  db:25, comp:7,  extra:5},
+  {mes:3,  ass:160,  evento:'Primeiro relatório divulgado',     ia:9.6,  db:25, comp:7,  extra:5},
+  {mes:4,  ass:280,  evento:'Imprensa regional',                ia:30,   db:25, comp:7,  extra:15},
+  {mes:5,  ass:480,  evento:'Sindicato parceiro',               ia:30,   db:25, comp:7,  extra:15},
+  {mes:6,  ass:780,  evento:'Viral em grupos de motoristas',    ia:146,  db:50, comp:25, extra:15},
+  {mes:7,  ass:1230, evento:'Cobertura nacional',               ia:246,  db:50, comp:25, extra:30},
+  {mes:8,  ass:1830, evento:'Segundo sindicato',                ia:246,  db:50, comp:25, extra:30},
+  {mes:9,  ass:2630, evento:'Artigo acadêmico publicado',       ia:350,  db:100,comp:85, extra:30},
+  {mes:10, ass:3630, evento:'Marco — dados nacionais robustos', ia:350,  db:100,comp:85, extra:30},
+  {mes:11, ass:4830, evento:'Expansão entregadores/mototaxi',   ia:350,  db:100,comp:85, extra:30},
+  {mes:12, ass:6330, evento:'Imprensa internacional',           ia:350,  db:100,comp:85, extra:30},
+].map(r => {
+  const custo_usd = r.ia + r.db + r.comp + r.extra;
+  const custo_brl = custo_usd * CAMBIO;
+  const rec_liq = r.ass * REC_LIQ_UNIT;
+  const margem = rec_liq - custo_brl;
+  const pct_m = rec_liq > 0 ? (margem / rec_liq) * 100 : -999;
+  const stack = r.ass <= 160 ? 'Gratuita' : r.ass <= 480 ? 'Flash' : r.ass <= 1830 ? 'Híbrida' : 'Dedicada';
+  const stackCor = r.ass <= 160 ? '#10B981' : r.ass <= 480 ? '#F59E0B' : r.ass <= 1830 ? '#3B82F6' : '#8B5CF6';
+  return {...r, custo_usd, custo_brl, rec_liq, margem, pct_m, stack, stackCor};
+});
+
+const IAS_LISTA = [
+  ['🌱','SeedIA','Python','✅'],['🏙️','RegionalIA','G.Search','⚠️'],['🗂️','ArquivistaIA','Gemini','✅'],
+  ['🔍','ScoutIA','G.Search','✅'],['📅','EventoIA','Groq','✅'],['🏛️','ArqueólogoIA','G.Search','⚠️'],
+  ['📚','EnciclopédiaIA','Gemini','⚠️'],['📌','FontesFrederico','Python','✅'],['⛏️','GarImpeiroIA','G.Search','⚠️'],
+  ['🌍','ContextoIA','G.Search','✅'],['🔄','SincroniaIA','G.Search','✅'],['📱','TelegramIA','Groq','⏳'],
+  ['💰','TarifaIA','Groq','✅'],['🔧','TechIA','Groq','✅'],['📊','EstatísticaIA','Groq','✅'],
+  ['🧠','PsicoIA','Gemini','✅'],['⚖️','JurídicaIA','Cohere','✅'],['🎓','AcadêmicoIA','G.Search','✅'],
+  ['💹','FinanceiroIA','G.Search','✅'],['⚖️','LegislativaIA','G.Search','✅'],['🔮','FuturoIA','Gemini','✅'],
+  ['🔗','CruzamentoIA','Gemini','✅'],['🔮','PredicãoIA','Gemini','✅'],['🎯','ComandoIA','Gemini','✅'],
+  ['🚗','FrotaIA','G.Search','✅'],['📈','TendênciaIA','G.Search','✅'],['🔬','LaboratórioIA','Gemini','✅'],
+  ['💼','AuditoriaIA','Groq','✅'],['🔀','EnriquecimentoIA','Gemini','✅'],['📡','ObservatórioIA','Gemini','✅'],
+  ['📰','JornalismoIA','Groq','✅'],['📺','MídiaIA','Groq','✅'],['💼','MercadoIA','G.Search','✅'],
+  ['💾','BackupIA','Python','✅'],['🔀','DistribuidorIA','Python','✅'],
+  ['🔄','ExtractorIA','Groq','⏳'],['🧹','CleanerIA','Groq','⏳'],['🔬','PatternIA','Gemini','⏳'],
+  ['💬','SentimentIA','Groq','⏳'],['📋','RelatorIA','Gemini','⏳'],['🔗','FusãoIA','Gemini','⏳'],
+];
+
+const GATILHOS = [
+  {ass:9,   cor:'#F59E0B',icon:'⚠️',msg:'Gemini se aproxima do limite de tokens — monitorar diariamente'},
+  {ass:25,  cor:'#F59E0B',icon:'⚠️',msg:'Supabase em 83% — preparar cartão para Pro'},
+  {ass:30,  cor:'#EF4444',icon:'🔴',msg:'MIGRAR agora: Gemini Flash pago + Supabase Pro (US$46,60/mês)'},
+  {ass:116, cor:'#10B981',icon:'✅',msg:'Breakeven atingido — receita cobre 100% da infraestrutura'},
+  {ass:160, cor:'#10B981',icon:'✅',msg:'Margem positiva consolidada — R$92/mês de lucro'},
+  {ass:480, cor:'#3B82F6',icon:'🚀',msg:'MIGRAR: Gemini Pro parcial para PatternIA e TarifaIA'},
+  {ass:500, cor:'#3B82F6',icon:'🚀',msg:'MIGRAR: Claude Sonnet para FuturoIA e ContextoIA'},
+  {ass:780, cor:'#8B5CF6',icon:'🚀',msg:'Stack híbrida completa — 3 modelos especializados ativos'},
+  {ass:2000,cor:'#EC4899',icon:'🧬',msg:'Iniciar fine-tuning nos dados proprietários do Observatório'},
+  {ass:5000,cor:'#EC4899',icon:'🧬',msg:'Modelos próprios — vantagem competitiva permanente'},
+];
+
+const FASES = [
+  {num:1, nome:'Validação', meta:'116 assinantes', cor:'#3B82F6', gatilhos:[
+    {ok:false, label:'116 assinantes — Breakeven'},
+    {ok:false, label:'1º relatório mensal publicado'},
+    {ok:false, label:'Índices registrados no INPI'},
+    {ok:false, label:'MEI Kelly aberto'},
+    {ok:false, label:'3 meses de dados coletados'},
+  ]},
+  {num:2, nome:'Tração', meta:'500 assinantes', cor:'#8B5CF6', gatilhos:[
+    {ok:false, label:'Parceiro acadêmico confirmado'},
+    {ok:false, label:'1º contrato B2B ativo'},
+    {ok:false, label:'Cobertura em veículo nacional'},
+    {ok:false, label:'500 assinantes ativos'},
+    {ok:false, label:'MRR > R$15.000'},
+  ]},
+  {num:3, nome:'Escala', meta:'5.000 assinantes', cor:'#10B981', gatilhos:[
+    {ok:false, label:'3+ contratos B2B ativos'},
+    {ok:false, label:'Edital CNPq ou FAPESP aprovado'},
+    {ok:false, label:'100k inscritos YouTube'},
+    {ok:false, label:'ARR > R$200.000'},
+    {ok:false, label:'5.000 assinantes'},
+  ]},
+  {num:4, nome:'Venda', meta:'Exit R$5M–30M', cor:'#EC4899', gatilhos:[
+    {ok:false, label:'ARR > R$1.000.000'},
+    {ok:false, label:'20.000 assinantes'},
+    {ok:false, label:'3 anos de dados históricos'},
+    {ok:false, label:'Citado em legislação ou regulação'},
+    {ok:false, label:'Parceria acadêmica internacional'},
+  ]},
+];
+
+// ═══════════════════════════════════════════════════════
+// INICIALIZAÇÃO
+// ═══════════════════════════════════════════════════════
+async function inicializar() {
+  renderIAs();
+  renderProjecao();
+  renderGatilhos();
+  renderFases();
+  renderMEI();
+  renderCRM();
+  renderKelly();
+  renderInteressados();
+  renderReceita();
+  renderSinais();
+  renderRelatorios();
+  renderPautas();
+  renderExitCenarios();
+  calcularPreco();
+  atualizarContrib();
+  await carregarDadosSupabase();
+}
+
+async function carregarDadosSupabase() {
+  const motData = await sbQuery('motoristas', 'select=id');
+  const ass = motData.length || 0;
+  const mrr = ass * REC_LIQ_UNIT;
+
+  document.getElementById('kpi-ass').textContent = ass.toLocaleString('pt-BR');
+  document.getElementById('kpi-mrr').textContent = brl(mrr);
+
+  const corridas = await sbQuery('corridas_ofertadas', 'select=id');
+  document.getElementById('kpi-corridas').textContent = (corridas.length || 0).toLocaleString('pt-BR');
+
+  const pctFase = Math.min(100, (ass / 116) * 100);
+  document.getElementById('pct-fase').textContent = pct(pctFase);
+  document.getElementById('barra-fase').style.width = pct(pctFase);
+
+  renderChecklist(ass);
+  renderBancoTabelas();
+}
+
+function renderChecklist(ass) {
+  const items = [
+    {ok: ass >= 116, label: '116 assinantes — Breakeven'},
+    {ok: false, label: '1º relatório mensal publicado'},
+    {ok: false, label: 'MEI Kelly aberto'},
+    {ok: false, label: 'INPI registrado'},
+    {ok: false, label: '3 meses de dados coletados'},
+  ];
+  document.getElementById('checklist-fase1').innerHTML = items.map(i =>
+    `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bg2);font-size:12px">
+      <span>${i.ok ? '✅' : '⬜'}</span>
+      <span style="color:${i.ok ? 'var(--verde)' : 'var(--txt2)'}">${i.label}</span>
+    </div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDERS
+// ═══════════════════════════════════════════════════════
+function renderIAs() {
+  const corStatus = s => s === '✅' ? 'var(--verde)' : s === '⚠️' ? 'var(--amarelo)' : 'var(--txt3)';
+  const borderStatus = s => s === '✅' ? 'var(--verde)' : s === '⚠️' ? 'var(--amarelo)' : s === '⏳' ? 'var(--azul2)' : 'var(--borda)';
+  document.getElementById('ia-lista').innerHTML = IAS_LISTA.map(([icon, nome, motor, status]) =>
+    `<div class="ia-item" style="border-left-color:${borderStatus(status)}">
+      <div class="ia-nome">${icon} ${nome}</div>
+      <div class="ia-motor">${motor}</div>
+      <div class="ia-status" style="color:${corStatus(status)}">${status} ${status === '⏳' ? 'Aguarda APK' : status === '⚠️' ? 'Erro corrigido v5.1' : 'OK'}</div>
+    </div>`
+  ).join('');
+}
+
+function renderProjecao() {
+  document.getElementById('tabela-projecao').innerHTML = PROJECAO.map((r, i) =>
+    `<tr>
+      <td class="mono" style="color:var(--txt3)">M${r.mes}</td>
+      <td style="color:var(--txt2);max-width:130px;font-size:10px">${r.evento}</td>
+      <td class="mono" style="color:var(--azul3);font-weight:700">${r.ass.toLocaleString()}</td>
+      <td class="mono">${brl(r.rec_liq)}</td>
+      <td class="mono" style="color:var(--vermelho)">${brl(r.custo_brl)}</td>
+      <td class="mono;font-weight:700" style="color:${r.margem>=0?'var(--verde)':'var(--vermelho)'}">${r.margem<0?'−':''}${brl(r.margem)}</td>
+      <td><span class="pill" style="background:${r.margem>=0?'rgba(16,185,129,.15)':'rgba(239,68,68,.15)'};color:${r.margem>=0?'var(--verde)':'var(--vermelho)'};border-color:${r.margem>=0?'rgba(16,185,129,.3)':'rgba(239,68,68,.3)'}">${pct(r.pct_m)}</span></td>
+      <td><span class="pill" style="background:${r.stackCor}25;color:${r.stackCor};border-color:${r.stackCor}40">${r.stack}</span></td>
+    </tr>`
+  ).join('');
+}
+
+function renderGatilhos() {
+  const ass = 0;
+  document.getElementById('gatilhos-container').innerHTML = GATILHOS.map(g => {
+    const passou = ass >= g.ass;
+    return `<div class="gatilho ${passou ? 'gatilho-ok' : g.cor === '#EF4444' ? 'gatilho-urgente' : g.cor === '#F59E0B' ? 'gatilho-aviso' : 'gatilho-pendente'}">
+      <span style="font-size:20px;min-width:28px">${g.icon}</span>
+      <div style="flex:1">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+          <span class="pill" style="background:${g.cor}25;color:${g.cor};border-color:${g.cor}40">${g.ass.toLocaleString()} ass</span>
+          ${passou ? '<span class="pill tag-verde">✓ atingido</span>' : ''}
+        </div>
+        <div style="font-size:12px;color:${passou ? 'var(--txt2)' : 'var(--txt3)'}">${g.msg}</div>
+      </div>
+    </div>`;
+  }).join('') + `<div class="card" style="margin-top:16px">
+    <div class="card-titulo">Timeline da Stack</div>
+    <div class="timeline">
+      ${[{ass:0,label:'Launch',cor:'#10B981',desc:'Stack\ngratuita'},{ass:30,label:'30 ass',cor:'#F59E0B',desc:'Flash\npago'},{ass:116,label:'116 ass',cor:'#10B981',desc:'Break-\neven'},{ass:500,label:'500 ass',cor:'#3B82F6',desc:'Claude\nAPI'},{ass:780,label:'780 ass',cor:'#8B5CF6',desc:'Stack\nhíbrida'},{ass:2000,label:'2k ass',cor:'#EC4899',desc:'Fine-\ntuning'},{ass:6330,label:'6.330',cor:'#EC4899',desc:'R$10k\nmarqem'}].map(m =>
+        `<div class="tl-item">
+          <div class="tl-dot" style="background:${ass>=m.ass?m.cor:'var(--bg2)'};border-color:${ass>=m.ass?m.cor:'var(--bg3)'};box-shadow:${ass>=m.ass?`0 0 10px ${m.cor}`:'none'}"></div>
+          <div class="tl-label" style="color:${ass>=m.ass?m.cor:'var(--txt3)'}">${m.label}</div>
+          <div class="tl-desc">${m.desc}</div>
+        </div>`
+      ).join('')}
+    </div>
+  </div>`;
+}
+
+function renderFases() {
+  document.getElementById('fases-container').innerHTML = FASES.map(f =>
+    `<div class="card" style="border-left:3px solid ${f.cor}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div>
+          <div style="font-size:18px;font-weight:800;color:${f.cor}">Fase ${f.num} — ${f.nome}</div>
+          <div style="font-size:11px;color:var(--txt3)">Meta: ${f.meta}</div>
+        </div>
+        <span class="pill" style="background:${f.cor}25;color:${f.cor};border-color:${f.cor}40">${f.num === 1 ? '◉ ATUAL' : 'Próxima'}</span>
+      </div>
+      ${f.gatilhos.map(g => `
+        <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bg2);font-size:12px">
+          <span>${g.ok ? '✅' : '⬜'}</span>
+          <span style="color:${g.ok ? 'var(--verde)' : 'var(--txt2)'}">${g.label}</span>
+        </div>`).join('')}
+    </div>`
+  ).join('');
+}
+
+function renderMEI() {
+  const items = [
+    [true, 'Emitir NF para empresas/instituições que contribuem (Portal MEI)'],
+    [true, 'Receber via Pix CNPJ, cartão, transferência e Google Play Billing'],
+    [true, 'Pagar DAS-MEI mensal fixo (~R$70/mês com ISS)'],
+    [true, 'Declarar DASN-SIMEI anualmente — gratuito no Gov.br'],
+    [false, 'NÃO pode ter sócio — Kelly abre MEI próprio para o Studio'],
+    [false, 'NÃO chamar contribuição de "doação" — sempre "assinatura" ou "serviço"'],
+    [false, 'NÃO ultrapassar R$81.000/ano — migrar para ME/SLU antes disso'],
+    ['warn', 'Manter extratos separados: Observatório vs. outras receitas pessoais'],
+  ];
+  document.getElementById('mei-lista').innerHTML = items.map(([ok, txt]) =>
+    `<div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--bg2);font-size:11px;line-height:1.5">
+      <span style="min-width:20px">${ok===true?'✅':ok===false?'❌':'⚠️'}</span>
+      <span style="color:${ok===true?'var(--txt2)':ok===false?'var(--vermelho)':'var(--amarelo)'}">${txt}</span>
+    </div>`
+  ).join('');
+}
+
+function renderCRM() {
+  const propostas = [
+    {empresa:'Porto Seguro', segmento:'Seguradora', status:'negociando', valor_alvo:30000, desc:'Relatório trimestral risco por turno e região — SP e RJ'},
+    {empresa:'Nubank', segmento:'Fintech', status:'em_analise', valor_alvo:13000, desc:'Acesso mensal ao IRR para modelo de score de crédito'},
+    {empresa:'Prefeitura BH', segmento:'Governo', status:'aceita', valor_alvo:58000, desc:'Dashboard de fluxo urbano para Secretaria de Mobilidade'},
+  ];
+  const tagStatus = s => s === 'aceita' ? 'tag-verde' : s === 'negociando' ? 'tag-amarelo' : 'tag-azul';
+  document.getElementById('propostas-lista').innerHTML = `
+    <div class="card-titulo">Propostas Ativas</div>
+    <table>
+      <thead><tr><th>EMPRESA</th><th>SEGMENTO</th><th>STATUS</th><th>VALOR ALVO</th><th>DESCRIÇÃO</th></tr></thead>
+      <tbody>${propostas.map(p => `
+        <tr>
+          <td style="font-weight:700;color:var(--txt)">${p.empresa}</td>
+          <td><span class="pill tag-azul">${p.segmento}</span></td>
+          <td><span class="pill ${tagStatus(p.status)}">${p.status}</span></td>
+          <td class="mono" style="color:var(--verde)">${brl(p.valor_alvo)}</td>
+          <td style="font-size:11px;color:var(--txt3)">${p.desc}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+
+  document.getElementById('conteudo-roi').innerHTML = `
+    <div class="card-titulo">ROI por Peça de Conteúdo</div>
+    <table>
+      <thead><tr><th>TÍTULO</th><th>TIPO</th><th>VIEWS</th><th>ASSINANTES</th><th>RECEITA B2B</th><th>SCORE</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--txt)">Surge assimétrico: Uber cobra mais de quem aceita menos</td><td><span class="pill tag-azul">YouTube Longo</span></td><td class="mono">42.000</td><td class="mono">380</td><td class="mono" style="color:var(--verde)">R$12.000</td><td><span class="pill tag-verde">78</span></td></tr>
+        <tr><td style="color:var(--txt)">Short: 99 reduz corridas 43% para multi-plataforma</td><td><span class="pill tag-roxo">Short</span></td><td class="mono">89.000</td><td class="mono">520</td><td class="mono">—</td><td><span class="pill tag-amarelo">63</span></td></tr>
+        <tr><td style="color:var(--txt)">Relatório Mensal — Fevereiro 2026</td><td><span class="pill tag-verde">Relatório</span></td><td class="mono">1.200</td><td class="mono">45</td><td class="mono">—</td><td><span class="pill tag-vermelho">42</span></td></tr>
+      </tbody>
+    </table>`;
+}
+
+function calcularPreco() {
+  const seg = document.getElementById('prec-segmento')?.value;
+  const esc = document.getElementById('prec-escopo')?.value;
+  const exc = document.getElementById('prec-exclusividade')?.value;
+  const bases = {seguradora:20000, fintech:10000, governo:40000, sindicato:7000, academia:15000, consultoria:25000};
+  const escopos = {relatorio:1, dataset:1.5, dashboard:2, api:2.5, indice:1.8, pesquisa:3};
+  const exclus = {nenhuma:1, setorial:2.2, regional:1.8, total:3.5};
+  const base = (bases[seg]||10000) * (escopos[esc]||1) * (exclus[exc]||1);
+  const piso = base * 0.7, alvo = base, teto = base * 1.6;
+  const el = document.getElementById('prec-resultado');
+  if (el) el.innerHTML = `
+    <div class="grid3">
+      <div class="kpi" style="border-left:3px solid var(--vermelho)"><div class="kpi-label">PISO — Mínimo aceitável</div><div class="kpi-valor" style="color:var(--vermelho)">${brl(piso)}</div></div>
+      <div class="kpi" style="border-left:3px solid var(--azul2)"><div class="kpi-label">ALVO — Referência ideal</div><div class="kpi-valor" style="color:var(--azul3)">${brl(alvo)}</div></div>
+      <div class="kpi" style="border-left:3px solid var(--verde)"><div class="kpi-label">TETO — Máximo aspiracional</div><div class="kpi-valor" style="color:var(--verde)">${brl(teto)}</div></div>
+    </div>
+    <div class="alerta alerta-info" style="margin-top:12px;margin-bottom:0">
+      💡 <strong>Estratégia:</strong> Abra com ${brl(alvo * 1.2)}. Se recusar, recue para ${brl(alvo)}. Nunca abaixo de ${brl(piso)}.
+    </div>`;
+}
+
+function atualizarContrib() {
+  const v = parseInt(document.getElementById('slider-contrib')?.value || 0);
+  const el = document.getElementById('contrib-valor');
+  if (el) el.textContent = brl(v);
+  const ass = 0, mrr = ass * REC_LIQ_UNIT, total = mrr + v;
+  const custo = PROJECAO[0].custo_brl;
+  const beAss = Math.max(0, Math.ceil((custo - v) / REC_LIQ_UNIT));
+  const kpis = document.getElementById('contrib-kpis');
+  if (kpis) kpis.innerHTML = `
+    <div class="kpi"><div class="kpi-label">Receita assinaturas</div><div class="kpi-valor" style="color:var(--azul3)">${brl(mrr)}</div></div>
+    <div class="kpi"><div class="kpi-label">+ Contribuições</div><div class="kpi-valor" style="color:var(--verde)">+${brl(v)}</div></div>
+    <div class="kpi"><div class="kpi-label">= Total mensal</div><div class="kpi-valor" style="color:var(--txt)">${brl(total)}</div></div>`;
+  const info = document.getElementById('contrib-info');
+  if (info && v > 0) info.innerHTML = `<div class="alerta alerta-ok">Com R$${v}/mês em contribuições, breakeven em <strong>${beAss.toLocaleString()}</strong> assinantes em vez de 116.</div>`;
+}
+
+function renderKelly() {
+  const docs = [
+    {tipo:'Nota Técnica', titulo:'OBS-06 — Supressão Filtro de Destino', status:'aguardando_kelly', prioridade:'alta'},
+    {tipo:'Relatório Psicossocial', titulo:'Gatilhos de Estresse — Carro vs Moto', status:'rascunho', prioridade:'media'},
+    {tipo:'Parecer Psicológico', titulo:'Design Persuasivo nas Plataformas', status:'rascunho', prioridade:'baixa'},
+  ];
+  const tagPrio = p => p === 'alta' ? 'tag-vermelho' : p === 'media' ? 'tag-amarelo' : 'tag-azul';
+  document.getElementById('kelly-documentos').innerHTML = docs.map(d => `
+    <div class="laudo-item">
+      <div class="laudo-tipo">${d.tipo}</div>
+      <div class="laudo-titulo">${d.titulo}</div>
+      <div class="laudo-meta">Prioridade: <span class="pill ${tagPrio(d.prioridade)}">${d.prioridade}</span> • Status: ${d.status}</div>
+      <div class="laudo-acoes">
+        <button class="btn btn-primary" onclick="alert('Abrindo documento para revisão...')">Revisar</button>
+        <button class="btn btn-ghost" onclick="window.print()">🖨️ Imprimir</button>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('kelly-tipos-lista').innerHTML = `
+    <div style="margin-bottom:12px;padding:12px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--verde)">
+      <div style="font-size:12px;font-weight:700;color:var(--verde);margin-bottom:4px">✅ Relatório Psicossocial</div>
+      <div style="font-size:11px;color:var(--txt3)">Análise de dados coletivos anonimizados. Uso: Editorial, B2B, imprensa. Risco CRP: Zero.</div>
+    </div>
+    <div style="margin-bottom:12px;padding:12px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--verde)">
+      <div style="font-size:12px;font-weight:700;color:var(--verde);margin-bottom:4px">✅ Parecer Psicológico</div>
+      <div style="font-size:11px;color:var(--txt3)">Análise técnica de condições de trabalho. Uso: Sindicatos, governo. Risco CRP: Baixo.</div>
+    </div>
+    <div style="margin-bottom:12px;padding:12px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--verde)">
+      <div style="font-size:12px;font-weight:700;color:var(--verde);margin-bottom:4px">✅ Nota Técnica</div>
+      <div style="font-size:11px;color:var(--txt3)">Opinião especializada sobre fenômenos coletivos. Uso: Livre/Todos. Risco CRP: Zero.</div>
+    </div>
+    <div style="padding:12px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--vermelho)">
+      <div style="font-size:12px;font-weight:700;color:var(--vermelho);margin-bottom:4px">❌ Laudo diagnóstico individual</div>
+      <div style="font-size:11px;color:var(--txt3)">Exige avaliação presencial. Fora do escopo do sistema.</div>
+    </div>`;
+}
+
+function renderInteressados() {
+  const lista = [
+    {cat:'seguradoras', nome:'Porto Seguro', tipo:'Seguradora', ticket:'R$25k–R$40k', passo:'Enviar relatório mensal como amostra', urgencia:'alta'},
+    {cat:'seguradoras', nome:'Azul Seguros', tipo:'Seguradora', ticket:'R$20k–R$35k', passo:'Abordar após Porto Seguro', urgencia:'media'},
+    {cat:'fintechs', nome:'Nubank', tipo:'Fintech', ticket:'R$10k–R$20k/mês', passo:'Contato via LinkedIn — área de dados', urgencia:'alta'},
+    {cat:'fintechs', nome:'PicPay', tipo:'Fintech', ticket:'R$8k–R$15k/mês', passo:'Abordar após Nubank', urgencia:'media'},
+    {cat:'governo', nome:'Ministério do Trabalho', tipo:'Federal', ticket:'R$100k–R$500k', passo:'Aguardar parceiro acadêmico', urgencia:'baixa'},
+    {cat:'academia', nome:'USP — Sociologia', tipo:'Universidade', ticket:'Bolsas R$30k–R$200k', passo:'Contato direto com Prof. trabalho', urgencia:'alta'},
+    {cat:'midia', nome:'Folha de S.Paulo', tipo:'Imprensa', ticket:'R$0 + autoridade', passo:'Contato com editoria tecnologia', urgencia:'alta'},
+    {cat:'juridico', nome:'Advogados Trabalhistas', tipo:'Advocacia', ticket:'R$2k–R$30k/dossiê', passo:'Identificar parceiro para Camada 3', urgencia:'alta'},
+    {cat:'fembrapp', nome:'FEMBRAPP', tipo:'Federação', ticket:'Parceria estratégica', passo:'Enviar proposta formal', urgencia:'alta'},
+  ];
+  const tagUrg = u => u === 'alta' ? 'tag-vermelho' : u === 'media' ? 'tag-amarelo' : 'tag-azul';
+  document.getElementById('interessados-lista').innerHTML = `
+    <div class="card-titulo">Pipeline de Parceiros — ${lista.length} contatos</div>
+    <table>
+      <thead><tr><th>EMPRESA</th><th>TIPO</th><th>TICKET</th><th>URGÊNCIA</th><th>PRÓXIMO PASSO</th></tr></thead>
+      <tbody>${lista.map(i => `
+        <tr>
+          <td style="font-weight:700;color:var(--txt)">${i.nome}</td>
+          <td><span class="pill tag-azul">${i.tipo}</span></td>
+          <td class="mono" style="color:var(--verde);font-size:11px">${i.ticket}</td>
+          <td><span class="pill ${tagUrg(i.urgencia)}">${i.urgencia}</span></td>
+          <td style="font-size:11px;color:var(--txt3)">${i.passo}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function renderReceita() {
+  const acoes = [
+    {prioridade:'🔴 Urgente', acao:'Ativar assinaturas — publicar app na Play Store', impacto:'R$2,09/ass/mês'},
+    {prioridade:'🟡 Alta', acao:'Contato Porto Seguro — enviar amostra do relatório de risco', impacto:'R$15k–40k/contrato'},
+    {prioridade:'🟡 Alta', acao:'Contato Nubank — proposta de licença do IRR', impacto:'R$10k–20k/mês'},
+    {prioridade:'🟢 Média', acao:'Publicar 1º relatório mensal no site do Observatório', impacto:'Credibilidade + assinantes'},
+    {prioridade:'🟢 Média', acao:'Parceria FEMBRAPP — lote de assinaturas para associados', impacto:'100+ assinaturas de uma vez'},
+  ];
+  document.getElementById('acoes-receita').innerHTML = acoes.map(a => `
+    <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--bg2);align-items:flex-start">
+      <div style="min-width:90px;font-size:11px">${a.prioridade}</div>
+      <div style="flex:1;font-size:12px;color:var(--txt2)">${a.acao}</div>
+      <div style="min-width:140px;text-align:right"><span class="pill tag-verde" style="font-size:10px">${a.impacto}</span></div>
+    </div>`).join('');
+}
+
+function renderSinais() {
+  const dados = {
+    regulatorio: ['PL Trabalho em Plataformas — Câmara (em tramitação)', 'ANPD — Consulta pública sobre decisões algorítmicas', 'Lei dos Motoristas 2024 — regulamentação em curso'],
+    midia: ['Folha SP — editoria trabalho atenta ao tema', 'G1 — reportagens sobre gig economy crescendo', 'Valor Econômico — dados de mobilidade têm espaço'],
+    academia: ['Google Scholar: alertas sobre "trabalho algorítmico Brasil"', 'IPEA: pesquisas sobre uberização e saúde mental', 'FGV: estudos de gig economy e regulação'],
+    plataformas: ['Uber Michelangelo: atualizações constantes de ML', 'Lei dos Motoristas: plataformas em período de adaptação', '99/DiDi: expansão de categorias no Brasil'],
+  };
+  Object.entries(dados).forEach(([k, items]) => {
+    const el = document.getElementById(`sinais-${k}`);
+    if (el) el.innerHTML = items.map(i =>
+      `<div style="padding:8px 0;border-bottom:1px solid var(--bg2);font-size:12px;color:var(--txt2)">◈ ${i}</div>`
+    ).join('');
+  });
+}
+
+function renderRelatorios() {
+  const docs = [
+    {nome:'Relatório Mensal — Março 2026', tipo:'PDF', status:'em_preparacao', data:'01/04/2026'},
+    {nome:'OBS-06 — Dossiê Completo', tipo:'PDF', status:'rascunho', data:'14/03/2026'},
+    {nome:'Nota Técnica PROCON-MG', tipo:'PDF', status:'aguardando_kelly', data:'—'},
+    {nome:'Metodologia INRMA v1.0', tipo:'PDF', status:'aprovado', data:'01/03/2026'},
+  ];
+  const tagStatus = s => s === 'aprovado' ? 'tag-verde' : s === 'aguardando_kelly' ? 'tag-amarelo' : s === 'rascunho' ? 'tag-azul' : 'tag-roxo';
+  document.getElementById('relatorios-lista').innerHTML = docs.map(d => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--bg2)">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--txt)">${d.nome}</div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:2px">${d.tipo} • ${d.data}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="pill ${tagStatus(d.status)}">${d.status.replace('_',' ')}</span>
+        <button class="btn btn-ghost" onclick="verRelatorio('${d.nome}')">Ver</button>
+        <button class="btn btn-ghost" onclick="window.print()">🖨️</button>
+      </div>
+    </div>`).join('');
+}
+
+function verRelatorio(nome) {
+  document.getElementById('relatorio-preview').style.display = 'block';
+  document.getElementById('relatorio-conteudo').textContent = `OBSERVATÓRIO DOS MOTORISTAS\n${nome}\n\nDocumento em preparação.\nAguardando dados suficientes para publicação completa.\n\nCNPJ: 59.202.646/0001-02\nAutoridade técnica: Dra. Kelly Fonseca — CRP/MG 04/59.263`;
+  document.getElementById('relatorio-preview').scrollIntoView({behavior:'smooth'});
+}
+
+function fecharPreview() {
+  document.getElementById('relatorio-preview').style.display = 'none';
+}
+
+function renderPautas() {
+  const pautas = [
+    {status:'semente', titulo:'Filtro de destino bloqueado durante surge — OBS-06', origem:'observatorio', prontidao:35},
+    {status:'desenvolvimento', titulo:'Comissão real Uber 2014→2026: queda de X%', origem:'enciclopedia', prontidao:60},
+    {status:'aguardando_kelly', titulo:'Subordinação psíquica algorítmica — padrões 2026', origem:'psicoia', prontidao:80},
+  ];
+  const tagStatus = s => s === 'aguardando_kelly' ? 'tag-amarelo' : s === 'desenvolvimento' ? 'tag-azul' : 'tag-roxo';
+  document.getElementById('pautas-editor').innerHTML = pautas.map(p => `
+    <div style="background:var(--bg2);border-radius:10px;padding:16px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:700;color:var(--txt);flex:1">${p.titulo}</div>
+        <span class="pill ${tagStatus(p.status)}" style="margin-left:8px">${p.status.replace('_',' ')}</span>
+      </div>
+      <div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:3px">
+          <span>Índice de prontidão</span><span>${p.prontidao}%</span>
+        </div>
+        <div class="barra-fundo"><div class="barra-fill" style="width:${p.prontidao}%;background:${p.prontidao>=80?'var(--verde)':p.prontidao>=50?'var(--azul2)':'var(--amarelo)'}"></div></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="alert('Enviando para Kelly...')">Enviar p/ Kelly</button>
+        <button class="btn btn-ghost" onclick="alert('Enviando para Studio Feed...')">→ Studio</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderExitCenarios() {
+  const cenarios = [
+    {nome:'Conservador', ass:20000, arr:500000, mult:6, exit:3000000, cor:'var(--azul3)'},
+    {nome:'Moderado', ass:50000, arr:1500000, mult:8, exit:12000000, cor:'var(--verde)'},
+    {nome:'Otimista', ass:100000, arr:3000000, mult:10, exit:30000000, cor:'var(--amarelo)'},
+  ];
+  document.getElementById('exit-cenarios').innerHTML = cenarios.map(c => `
+    <div class="kpi" style="margin-bottom:12px;border-left:3px solid ${c.cor}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:14px;font-weight:700;color:${c.cor}">${c.nome}</div>
+        <span class="pill" style="background:${c.cor}25;color:${c.cor};border-color:${c.cor}40">${c.ass.toLocaleString()} ass.</span>
+      </div>
+      <div class="grid3">
+        <div><div style="font-size:10px;color:var(--txt3)">ARR</div><div class="mono" style="color:var(--txt);font-weight:700">${brl(c.arr)}</div></div>
+        <div><div style="font-size:10px;color:var(--txt3)">Múltiplo</div><div class="mono" style="color:var(--txt);font-weight:700">${c.mult}×</div></div>
+        <div><div style="font-size:10px;color:var(--txt3)">Exit</div><div class="mono" style="color:${c.cor};font-weight:800">${brl(c.exit)}</div></div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('valuation-drivers').innerHTML = [
+    {icon:'📊', label:'Volume de dados históricos únicos', desc:'Cada motorista = dado impossível de replicar'},
+    {icon:'⚖️', label:'Metodologia IBGE-compatível e registrada no INPI', desc:'Credibilidade científica e proteção legal'},
+    {icon:'🤝', label:'Parceria acadêmica formal', desc:'Universidade pública valida a metodologia'},
+    {icon:'📰', label:'Cobertura jornalística nacional', desc:'Folha, G1, Valor = prova de relevância'},
+    {icon:'💼', label:'Contratos B2B ativos', desc:'Receita recorrente multiplica valuation'},
+    {icon:'🔬', label:'Fine-tuning em dados proprietários', desc:'Vantagem competitiva permanente e impossível de copiar'},
+  ].map(d => `
+    <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--bg2);align-items:flex-start">
+      <span style="font-size:20px;min-width:28px">${d.icon}</span>
+      <div><div style="font-size:13px;font-weight:700;color:var(--txt)">${d.label}</div>
+      <div style="font-size:11px;color:var(--txt3);margin-top:2px">${d.desc}</div></div>
+    </div>`).join('');
+}
+
+async function renderBancoTabelas() {
+  const tabelas = [
+    {nome:'linha_tempo_algoritmica', meta:500},
+    {nome:'observacoes_pesquisador', meta:200},
+    {nome:'fontes_enciclopedia', meta:200},
+    {nome:'indices_publicados', meta:60},
+    {nome:'producoes_editoriais', meta:50},
+    {nome:'remontagem_algoritmo', meta:100},
+    {nome:'dossies_camada3', meta:30},
+    {nome:'studio_feed', meta:100},
+  ];
+  const counts = await Promise.all(tabelas.map(t => sbQuery(t.nome, 'select=id')));
+  document.getElementById('tabelas-banco').innerHTML = tabelas.map((t, i) => {
+    const count = counts[i].length || 0;
+    const pctVal = Math.min(100, (count / t.meta) * 100);
+    const cor = pctVal >= 80 ? 'var(--verde)' : pctVal >= 40 ? 'var(--azul2)' : 'var(--amarelo)';
+    return `<div style="padding:12px 0;border-bottom:1px solid var(--bg2)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:12px;color:var(--txt);font-family:monospace">${t.nome}</span>
+        <span style="font-size:12px;font-weight:700;color:${cor};font-family:monospace">${count.toLocaleString()} / ${t.meta}</span>
+      </div>
+      <div class="barra-fundo"><div class="barra-fill" style="width:${pctVal}%;background:${cor}"></div></div>
+    </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
