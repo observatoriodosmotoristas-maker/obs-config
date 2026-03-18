@@ -166,18 +166,6 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
 .motorista-nome { font-weight: 700; margin-bottom: 4px; }
 .motorista-info { font-size: 11px; color: #94A3B8; }
 
-.semente-item {
-  background: #0F2040;
-  border-left: 3px solid #3B82F6;
-  border-radius: 4px;
-  padding: 10px;
-  margin-bottom: 8px;
-}
-.semente-titulo { font-weight: 700; margin-bottom: 4px; }
-.semente-status { font-size: 11px; color: #94A3B8; }
-.semente-progress { height: 3px; background: #1E3A5F; border-radius: 2px; overflow: hidden; margin-top: 6px; }
-.semente-fill { height: 100%; background: #3B82F6; }
-
 .realtime-indicator {
   display: flex;
   gap: 6px;
@@ -203,6 +191,8 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
   padding: 20px 12px;
   font-size: 12px;
 }
+
+.loading { color: #60A5FA; }
 
 @media (max-width: 480px) {
   .page-titulo { font-size: 14px; }
@@ -251,11 +241,11 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
       <div class="page-sub">Radar de eventos em tempo real</div>
       <div class="realtime-indicator">
         <span class="realtime-dot"></span>
-        <span>Conectado</span>
+        <span>Conectado ao Supabase</span>
       </div>
       <div class="card">
         <div class="card-titulo">Eventos Recentes</div>
-        <div class="empty-state">Nenhum evento no momento</div>
+        <div id="sinais-lista" class="empty-state">Carregando...</div>
       </div>
     </div>
 
@@ -269,19 +259,7 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
       </div>
       <div class="card">
         <div class="card-titulo">Motoristas Online</div>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Localização</th>
-              <th>Plataforma</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="mapa-tabela">
-            <tr><td colspan="4" style="text-align:center;">Carregando...</td></tr>
-          </tbody>
-        </table>
+        <div id="mapa-lista" class="empty-state">Carregando...</div>
       </div>
     </div>
 
@@ -300,14 +278,6 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
             <div style="font-weight:700;">A01</div>
             <span class="semaforo"></span>
           </div>
-          <div style="background:#0F2040;padding:8px;border-radius:4px;text-align:center;font-size:11px;">
-            <div style="font-weight:700;">A02</div>
-            <span class="semaforo"></span>
-          </div>
-          <div style="background:#0F2040;padding:8px;border-radius:4px;text-align:center;font-size:11px;">
-            <div style="font-weight:700;">A03</div>
-            <span class="semaforo"></span>
-          </div>
         </div>
       </div>
     </div>
@@ -316,21 +286,23 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
     <div id="laboratorio" class="page">
       <div class="page-titulo">🌱 Laboratório</div>
       <div class="page-sub">Funil de processamento</div>
-      <div class="card">
-        <div class="card-titulo">🌱 Semente</div>
-        <div class="empty-state">Nenhuma semente</div>
-      </div>
-      <div class="card">
-        <div class="card-titulo">🌿 Germinando</div>
-        <div class="empty-state">Nenhuma semente</div>
-      </div>
-      <div class="card">
-        <div class="card-titulo">🌾 Amadurecendo</div>
-        <div class="empty-state">Nenhuma semente</div>
-      </div>
-      <div class="card">
-        <div class="card-titulo">🌽 Colheita</div>
-        <div class="empty-state">Nenhuma semente</div>
+      <div id="lab-container">
+        <div class="card">
+          <div class="card-titulo">🌱 Semente</div>
+          <div id="lab-semente" class="empty-state">Carregando...</div>
+        </div>
+        <div class="card">
+          <div class="card-titulo">🌿 Germinando</div>
+          <div id="lab-germinando" class="empty-state">Carregando...</div>
+        </div>
+        <div class="card">
+          <div class="card-titulo">🌾 Amadurecendo</div>
+          <div id="lab-amadurecendo" class="empty-state">Carregando...</div>
+        </div>
+        <div class="card">
+          <div class="card-titulo">🌽 Colheita</div>
+          <div id="lab-colheita" class="empty-state">Carregando...</div>
+        </div>
       </div>
     </div>
 
@@ -340,7 +312,7 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
       <div class="page-sub">Fila de relatos e laudos psicossociais</div>
       <div class="card">
         <div class="card-titulo">Fila de Análise</div>
-        <div class="empty-state">Nenhum relato na fila</div>
+        <div id="kelly-fila" class="empty-state">Carregando...</div>
       </div>
     </div>
 
@@ -352,7 +324,7 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
         <div class="card-titulo">Parecer Advogado</div>
         <textarea class="input" placeholder="Digite o parecer jurídico..." style="min-height:80px;"></textarea>
         <button class="btn" onclick="alert('✅ Parecer salvo')">Salvar Parecer</button>
-        <div style="padding:10px;background:rgba(239,68,68,0.1);border-left:3px solid #EF4444;border-radius:4px;font-size:11px;">
+        <div style="padding:10px;background:rgba(239,68,68,0.1);border-left:3px solid #EF4444;border-radius:4px;font-size:11px;margin-top:8px;">
           <strong>🔴 Trava Jurídica:</strong> Despacho bloqueado se parecer vazio
         </div>
       </div>
@@ -375,12 +347,12 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
       <div class="page-sub">KPIs em tempo real</div>
       <div class="kpi">
         <div class="kpi-label">Motoristas Online</div>
-        <div class="kpi-valor" id="kpi-online">0</div>
+        <div class="kpi-valor" id="kpi-online" class="loading">—</div>
         <div class="kpi-sub">Agora</div>
       </div>
       <div class="kpi">
         <div class="kpi-label">Sementes Processadas</div>
-        <div class="kpi-valor" id="kpi-sementes">0</div>
+        <div class="kpi-valor" id="kpi-sementes" class="loading">—</div>
         <div class="kpi-sub">Total</div>
       </div>
       <div class="kpi">
@@ -398,7 +370,27 @@ td { padding: 8px; border-bottom: 1px solid #1E3A5F; color: #94A3B8; }
 </div>
 
 <script>
+const SUPABASE_URL = 'https://ocjgtbeswwprayuexwrf.supabase.com';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jamd0YmVzd3dwcmF5dWV4d3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTExNDQ5NzcsImV4cCI6MjAyNjc0NDk3N30.7Vlpv59ZPtU4Fkcvsmxigg_-QXO63yX';
+
 let usuarioLogado = null;
+let pollInterval = null;
+
+async function fetchSupabase(table) {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (e) {
+    console.error(`Erro ao buscar ${table}:`, e);
+    return [];
+  }
+}
 
 function entrar() {
   const usuario = document.getElementById('lu').value;
@@ -408,6 +400,7 @@ function entrar() {
     usuarioLogado = usuario;
     document.getElementById('login').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    iniciarPainel();
   } else {
     document.getElementById('lerro').textContent = 'Usuário ou senha inválidos';
   }
@@ -415,6 +408,7 @@ function entrar() {
 
 function sair() {
   usuarioLogado = null;
+  if (pollInterval) clearInterval(pollInterval);
   document.getElementById('app').style.display = 'none';
   document.getElementById('login').style.display = 'flex';
   document.getElementById('lu').value = '';
@@ -426,6 +420,70 @@ function irPara(pagina) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('ativo'));
   document.getElementById(pagina).classList.add('ativa');
   event.target.classList.add('ativo');
+}
+
+async function iniciarPainel() {
+  console.log('✅ Painel iniciado - Conectando ao Supabase...');
+  
+  // Carregar dados iniciais
+  await atualizarDados();
+  
+  // Polling a cada 5 segundos
+  pollInterval = setInterval(atualizarDados, 5000);
+}
+
+async function atualizarDados() {
+  // Motoristas online
+  const motoristas = await fetchSupabase('motoristas_online');
+  const onlineCount = motoristas.filter(m => m.is_online).length;
+  document.getElementById('kpi-online').textContent = onlineCount;
+  document.getElementById('kpi-online').classList.remove('loading');
+  
+  if (motoristas.length > 0) {
+    document.getElementById('mapa-lista').innerHTML = motoristas.map(m => `
+      <div class="motorista-item">
+        <div class="motorista-nome">${m.cidade_estado}</div>
+        <div class="motorista-info">
+          ${m.plataformas ? m.plataformas.join(', ') : 'N/A'} • ${m.dispositivo_modelo || 'N/A'}
+        </div>
+        <div style="margin-top:4px;">
+          <span class="semaforo"></span> ${m.is_online ? 'Online' : 'Offline'}
+        </div>
+      </div>
+    `).join('');
+  } else {
+    document.getElementById('mapa-lista').innerHTML = '<div class="empty-state">Nenhum motorista online</div>';
+  }
+
+  // Sementes
+  const sementes = await fetchSupabase('laboratorio_sementes');
+  document.getElementById('kpi-sementes').textContent = sementes.length;
+  document.getElementById('kpi-sementes').classList.remove('loading');
+  
+  const estados = { 'SEMENTE': [], 'GERMINANDO': [], 'AMADURECENDO': [], 'COLHEITA': [] };
+  sementes.forEach(s => {
+    if (estados[s.estado_metabolico]) {
+      estados[s.estado_metabolico].push(s);
+    }
+  });
+
+  Object.keys(estados).forEach(estado => {
+    const el = document.getElementById(`lab-${estado.toLowerCase()}`);
+    if (el) {
+      if (estados[estado].length > 0) {
+        el.innerHTML = estados[estado].map(s => `
+          <div class="motorista-item">
+            <div style="font-weight:700;font-size:11px;">${(s.conteudo_bruto || '').substring(0, 30)}...</div>
+            <div style="font-size:10px;color:#94A3B8;margin-top:4px;">ID: ${s.id.substring(0, 8)}</div>
+          </div>
+        `).join('');
+      } else {
+        el.innerHTML = '<div class="empty-state">Vazio</div>';
+      }
+    }
+  });
+
+  console.log(`✅ Dados atualizados: ${motoristas.length} motoristas, ${sementes.length} sementes`);
 }
 
 console.log('✅ Painel Forense 2026 carregado');
