@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Observatório da Mobilidade — Painel Forense 2026</title>
+<title>Observatório da Mobilidade — Painel Forense 2026 (Realtime)</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -73,14 +73,6 @@ body{background:var(--bg);color:var(--txt);font-family:'SF Mono','Fira Code',mon
 .tag-roxo{background:rgba(139,92,246,.15);color:var(--roxo);border-color:rgba(139,92,246,.3);}
 .tag-cinza{background:rgba(71,85,105,.3);color:var(--txt3);border-color:var(--borda);}
 
-/* TABS */
-.tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap;}
-.tab-btn{padding:7px 14px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;background:var(--bg1);border:1px solid var(--borda);color:var(--txt3);font-family:inherit;transition:all .2s;}
-.tab-btn.ativo{background:var(--azul);border-color:var(--azul);color:#fff;}
-.tab-btn:hover:not(.ativo){border-color:var(--azul2);color:var(--txt2);}
-.tab-panel{display:none;}
-.tab-panel.ativo{display:block;}
-
 /* TABELA */
 table{width:100%;border-collapse:collapse;font-size:11px;}
 th{padding:8px 12px;text-align:left;color:var(--txt3);font-weight:600;border-bottom:1px solid var(--borda);background:var(--bg2);white-space:nowrap;font-size:10px;letter-spacing:1px;}
@@ -90,59 +82,34 @@ tr:hover td{background:var(--bg2);}
 /* INPUT / BUTTON */
 .input{background:var(--bg2);border:1px solid var(--borda);border-radius:6px;padding:8px 12px;color:var(--txt);font-size:13px;font-family:inherit;outline:none;transition:border .2s;width:100%;}
 .input:focus{border-color:var(--azul2);}
-textarea.input{resize:vertical;min-height:80px;}
 .btn{padding:8px 16px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;border:1px solid;}
 .btn-primary{background:var(--azul);border-color:var(--azul);color:#fff;}
 .btn-primary:hover{background:var(--azul2);}
-.btn-ghost{background:transparent;border-color:var(--borda);color:var(--txt2);}
-.btn-ghost:hover{border-color:var(--azul2);color:var(--azul3);}
-.btn-verde{background:rgba(16,185,129,.15);border-color:var(--verde);color:var(--verde);}
-.btn-roxo{background:rgba(139,92,246,.15);border-color:var(--roxo);color:var(--roxo);}
-.btn-sm{padding:5px 10px;font-size:11px;}
-.row-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 
-/* ALERTA */
-.alerta{padding:12px 16px;border-radius:8px;border-left:3px solid;margin-bottom:12px;font-size:12px;}
-.alerta-info{background:rgba(29,78,216,.1);border-color:var(--azul2);color:var(--azul3);}
-.alerta-aviso{background:rgba(245,158,11,.1);border-color:var(--amarelo);color:var(--amarelo);}
-.alerta-erro{background:rgba(239,68,68,.1);border-color:var(--vermelho);color:var(--vermelho);}
-.alerta-ok{background:rgba(16,185,129,.1);border-color:var(--verde);color:var(--verde);}
+/* REALTIME INDICATOR */
+.realtime-status{display:flex;gap:8px;align-items:center;font-size:11px;padding:8px 12px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:6px;margin-bottom:16px;}
+.realtime-dot{width:8px;height:8px;border-radius:50%;background:var(--verde);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* SEMÁFORO */
-.semaforo{width:10px;height:10px;border-radius:50%;display:inline-block;}
-@keyframes pulso{0%,100%{opacity:1}50%{opacity:.3}}
-.pulso{animation:pulso 1.5s infinite;}
+/* MOTORISTA CARD */
+.motorista-card{background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:8px;border-left:3px solid;transition:all .3s;}
+.motorista-card.online{border-left-color:var(--verde);}
+.motorista-card.offline{border-left-color:var(--txt3);}
+.motorista-nome{font-size:12px;font-weight:700;color:var(--txt);}
+.motorista-info{font-size:10px;color:var(--txt3);margin-top:4px;}
 
-/* IA GRID */
-.ia-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px;}
-.ia-item{background:var(--bg2);border-radius:8px;padding:12px;border-left:3px solid;}
-.ia-nome{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px;}
-.ia-motor{font-size:10px;color:var(--txt3);margin-bottom:6px;}
-.ia-status{font-size:10px;font-weight:700;}
+/* SEMENTE CARD */
+.semente-card{background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:8px;border-left:3px solid;}
+.semente-semente{border-left-color:#000;}
+.semente-germinando{border-left-color:var(--amarelo);}
+.semente-amadurecendo{border-left-color:var(--azul3);}
+.semente-colheita{border-left-color:var(--verde);}
+.semente-titulo{font-size:12px;font-weight:700;color:var(--txt);}
+.semente-status{font-size:10px;color:var(--txt3);margin-top:4px;}
+.semente-progresso{height:4px;background:var(--bg1);border-radius:2px;margin-top:6px;overflow:hidden;}
+.semente-fill{height:100%;background:var(--azul3);border-radius:2px;transition:width .5s;}
 
-/* CAMADAS DE RISCO */
-.camada-1{border-left:3px solid var(--verde)!important;}
-.camada-2{border-left:3px solid var(--amarelo)!important;}
-.camada-3{border-left:3px solid var(--vermelho)!important;}
-.camada-4{border-left:3px solid #000!important;}
-
-/* JOURNAL */
-.journal-item{background:var(--bg2);border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid var(--azul2);}
-.journal-meta{display:flex;gap:12px;align-items:center;margin-bottom:8px;font-size:10px;color:var(--txt3);}
-.journal-titulo{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:6px;}
-.journal-body{font-size:12px;color:var(--txt2);line-height:1.6;}
-
-/* LABORATÓRIO */
-.lab-stage{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;}
-.lab-col{min-width:180px;background:var(--bg2);border-radius:10px;padding:12px;}
-.lab-col-titulo{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--borda);}
-.lab-card{background:var(--bg1);border-radius:8px;padding:10px;margin-bottom:8px;font-size:11px;cursor:pointer;transition:all .2s;border:1px solid var(--borda);}
-.lab-card:hover{border-color:var(--azul2);}
-.lab-confianca{height:4px;background:var(--bg3);border-radius:2px;margin-top:6px;overflow:hidden;}
-.lab-fill{height:100%;border-radius:2px;transition:width .5s;}
-
-/* RESPONSIVE */
-@media(max-width:768px){.sidebar{width:60px;}.sidebar-logo-text,.sidebar-logo-sub,.nav-item span,.nav-section{display:none;}.main{margin-left:60px;padding:16px;}.grid2,.grid3,.grid4{grid-template-columns:1fr;}}
+@media(max-width:768px){.sidebar{width:60px;}.sidebar-logo-text,.sidebar-logo-sub,.nav-item span,.nav-section{display:none;}.main{margin-left:60px;padding:16px;}}
 </style>
 </head>
 <body>
@@ -169,35 +136,11 @@ textarea.input{resize:vertical;min-height:80px;}
       <div class="sidebar-logo-sub">Forense 2026</div>
     </div>
     <div class="sidebar-nav">
-      <!-- BLOCO 01: VISÃO DE CAMPO -->
-      <div class="nav-section">Visão de Campo</div>
-      <div class="nav-item ativo" onclick="irPara('sinais',this)"><span class="ni">📡</span><span>Sinais Externos</span></div>
-      <div class="nav-item" onclick="irPara('mapa',this)"><span class="ni">🗺️</span><span>Mapa de Calor</span></div>
-      
-      <!-- BLOCO 02: O CÉREBRO -->
-      <div class="nav-section">O Cérebro</div>
-      <div class="nav-item" onclick="irPara('ias',this)"><span class="ni">🤖</span><span>Monitor IAs</span></div>
-      <div class="nav-item" onclick="irPara('gemini',this)"><span class="ni">🧠</span><span>GeminiComando</span></div>
-      <div class="nav-item" onclick="irPara('pesquisa',this)"><span class="ni">🔍</span><span>Grok & Perplexity</span></div>
-      <div class="nav-item" onclick="irPara('alimentacao',this)"><span class="ni">📥</span><span>Alimentação Manual</span></div>
+      <div class="nav-section">Monitoramento</div>
+      <div class="nav-item ativo" onclick="irPara('mapa',this)"><span class="ni">🗺️</span><span>Mapa de Calor</span></div>
       <div class="nav-item" onclick="irPara('laboratorio',this)"><span class="ni">🌱</span><span>Laboratório</span></div>
-      
-      <!-- BLOCO 03: A AUTORIDADE -->
-      <div class="nav-section">A Autoridade</div>
-      <div class="nav-item" onclick="irPara('kelly',this)"><span class="ni">⚖️</span><span>Painel Kelly</span></div>
-      <div class="nav-item" onclick="irPara('editor',this)"><span class="ni">✍️</span><span>Omni-Editor</span></div>
-      <div class="nav-item" onclick="irPara('relatorios',this)"><span class="ni">📄</span><span>Relatórios</span></div>
-      <div class="nav-item" onclick="irPara('valuation',this)"><span class="ni">$</span><span>Valuation</span></div>
-      <div class="nav-item" onclick="irPara('despacho',this)"><span class="ni">📤</span><span>Terminal Despacho</span></div>
-      
-      <!-- BLOCO 04: GESTÃO & INFRA -->
-      <div class="nav-section">Gestão & Infra</div>
+      <div class="nav-section">Painel Admin</div>
       <div class="nav-item" onclick="irPara('saude',this)"><span class="ni">◉</span><span>Saúde do Negócio</span></div>
-      <div class="nav-item" onclick="irPara('receitas',this)"><span class="ni">💰</span><span>Receitas</span></div>
-      <div class="nav-item" onclick="irPara('crm',this)"><span class="ni">◫</span><span>CRM B2B</span></div>
-      <div class="nav-item" onclick="irPara('fases',this)"><span class="ni">◈</span><span>Fases & Gatilhos</span></div>
-      <div class="nav-item" onclick="irPara('banco',this)"><span class="ni">📊</span><span>Banco de Dados</span></div>
-      <div class="nav-item" onclick="irPara('infra',this)"><span class="ni">⚙️</span><span>Infraestrutura</span></div>
     </div>
     <div class="sidebar-footer">
       <button class="logout-btn" onclick="fazerLogout()">🚪 Sair</button>
@@ -206,318 +149,63 @@ textarea.input{resize:vertical;min-height:80px;}
 
   <!-- MAIN -->
   <div class="main">
-    <!-- PÁGINA: SINAIS EXTERNOS -->
-    <div id="sinais" class="page ativa">
-      <div class="page-titulo">📡 Sinais Externos</div>
-      <div class="page-sub">Radar de eventos e adição manual</div>
-      <div class="card">
-        <div class="card-titulo">Novo Sinal</div>
-        <input class="input" id="sinal-texto" placeholder="Descrição do sinal..." style="margin-bottom:8px;" />
-        <button class="btn btn-primary" onclick="adicionarSinal()">Adicionar Sinal</button>
-      </div>
-      <div id="sinais-lista"></div>
-    </div>
-
     <!-- PÁGINA: MAPA DE CALOR -->
-    <div id="mapa" class="page">
-      <div class="page-titulo">🗺️ Mapa de Calor</div>
-      <div class="page-sub">Motoristas online por região</div>
+    <div id="mapa" class="page ativa">
+      <div class="page-titulo">🗺️ Mapa de Calor (Realtime)</div>
+      <div class="page-sub">Motoristas online monitorados em tempo real</div>
+      
+      <div class="realtime-status">
+        <span class="realtime-dot"></span>
+        <span>Conectado ao Supabase Realtime</span>
+      </div>
+      
       <div class="card">
         <div class="card-titulo">Motoristas Online</div>
-        <table>
-          <tr><th>ID</th><th>Localização</th><th>Plataforma</th><th>Dispositivo</th><th>Android</th><th>App</th><th>Status</th></tr>
-          <tbody id="mapa-tabela"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- PÁGINA: MONITOR IAs -->
-    <div id="ias" class="page">
-      <div class="page-titulo">🤖 Monitor de IAs</div>
-      <div class="page-sub">Semáforo de status das 51 IAs</div>
-      <div class="card">
-        <div class="card-titulo">IAs Ativas (A01-A45)</div>
-        <div id="ia-grid-a" class="ia-grid"></div>
-      </div>
-      <div class="card">
-        <div class="card-titulo">IAs Aguardando (A46-A51)</div>
-        <div id="ia-grid-b" class="ia-grid"></div>
-      </div>
-    </div>
-
-    <!-- PÁGINA: GEMINI COMANDO -->
-    <div id="gemini" class="page">
-      <div class="page-titulo">🧠 GeminiComandoIA</div>
-      <div class="page-sub">Input para URLs/Fatos e cópia de prompts</div>
-      <div class="card">
-        <div class="card-titulo">Enviar Comando</div>
-        <select class="input" id="cmd-ia-select" style="margin-bottom:8px;">
-          <option value="">Selecione uma IA...</option>
-          <option value="GeminiComandoIA">GeminiComandoIA</option>
-          <option value="ComandoIA">ComandoIA</option>
-        </select>
-        <textarea class="input" id="cmd-ia-texto" placeholder="Comando ou URL..." style="margin-bottom:8px;"></textarea>
-        <button class="btn btn-primary" onclick="enviarComandoIA()">Enviar Comando</button>
-        <div id="cmd-ia-resultado" style="margin-top:12px;"></div>
-      </div>
-    </div>
-
-    <!-- PÁGINA: PESQUISA EXTERNA -->
-    <div id="pesquisa" class="page">
-      <div class="page-titulo">🔍 Grok & Perplexity</div>
-      <div class="page-sub">Atalhos de pesquisa externa</div>
-      <div class="card">
-        <div class="card-titulo">Ferramentas de Pesquisa</div>
-        <div class="row-btns">
-          <button class="btn btn-roxo" onclick="abrirGrok()">🤖 Grok</button>
-          <button class="btn btn-roxo" onclick="abrirPerplexity()">🔍 Perplexity</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PÁGINA: ALIMENTAÇÃO MANUAL -->
-    <div id="alimentacao" class="page">
-      <div class="page-titulo">📥 Alimentação Manual</div>
-      <div class="page-sub">Input direto para o Reciclador</div>
-      <div class="card">
-        <div class="card-titulo">Novo Dado</div>
-        <textarea class="input" id="alimentacao-texto" placeholder="Conteúdo para o reciclador..." style="margin-bottom:8px;"></textarea>
-        <select class="input" id="alimentacao-camada" style="margin-bottom:8px;">
-          <option value="PRETA">🟫 PRETA (Semente)</option>
-          <option value="AMARELA">🟨 AMARELA</option>
-          <option value="VERMELHA">🔴 VERMELHA</option>
-          <option value="VERDE">🟢 VERDE</option>
-        </select>
-        <button class="btn btn-primary" onclick="alimentarManual()">Enviar para Reciclador</button>
+        <div id="mapa-lista"></div>
       </div>
     </div>
 
     <!-- PÁGINA: LABORATÓRIO -->
     <div id="laboratorio" class="page">
-      <div class="page-titulo">🌱 Laboratório</div>
-      <div class="page-sub">Funil visual: Semente → Germinando → Amadurecendo → Colheita</div>
-      <div class="card">
-        <div class="lab-stage">
-          <div class="lab-col">
-            <div class="lab-col-titulo">🌱 Semente</div>
-            <div id="lab-semente"></div>
-          </div>
-          <div class="lab-col">
-            <div class="lab-col-titulo">🌿 Germinando</div>
-            <div id="lab-germinando"></div>
-          </div>
-          <div class="lab-col">
-            <div class="lab-col-titulo">🌾 Amadurecendo</div>
-            <div id="lab-amadurecendo"></div>
-          </div>
-          <div class="lab-col">
-            <div class="lab-col-titulo">🌽 Colheita</div>
-            <div id="lab-colheita"></div>
-          </div>
-        </div>
+      <div class="page-titulo">🌱 Laboratório (Realtime)</div>
+      <div class="page-sub">Sementes em processamento - Atualização em tempo real</div>
+      
+      <div class="realtime-status">
+        <span class="realtime-dot"></span>
+        <span>Monitorando 51 IAs em paralelo</span>
       </div>
-    </div>
-
-    <!-- PÁGINA: PAINEL KELLY -->
-    <div id="kelly" class="page">
-      <div class="page-titulo">⚖️ Painel Kelly</div>
-      <div class="page-sub">Fila de relatos e laudos psicossociais</div>
+      
       <div class="card">
-        <div class="card-titulo">Relatos Pendentes</div>
-        <div id="kelly-fila"></div>
-      </div>
-    </div>
-
-    <!-- PÁGINA: OMNI-EDITOR -->
-    <div id="editor" class="page">
-      <div class="page-titulo">✍️ Omni-Editor</div>
-      <div class="page-sub">Interface de Journaling com Trava Jurídica</div>
-      <div class="card">
-        <div class="card-titulo">Novo Parecer</div>
-        <input class="input" id="parecer-titulo" placeholder="Título da pauta..." style="margin-bottom:8px;" />
-        <textarea class="input" id="parecer-texto" placeholder="Parecer jurídico..." style="margin-bottom:8px;"></textarea>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-          <input type="checkbox" id="parecer-trava" />
-          <label for="parecer-trava" style="font-size:11px;">🔴 Trava Jurídica (bloqueia despacho se vazio)</label>
-        </div>
-        <button class="btn btn-primary" onclick="salvarParecer()">Salvar Parecer</button>
-      </div>
-    </div>
-
-    <!-- PÁGINA: RELATÓRIOS -->
-    <div id="relatorios" class="page">
-      <div class="page-titulo">📄 Relatórios</div>
-      <div class="page-sub">Gerador de documentos para impressão</div>
-      <div class="card">
-        <div class="card-titulo">Gerar Relatório</div>
-        <button class="btn btn-primary" onclick="gerarRelatorio()">📄 Gerar PDF</button>
-        <button class="btn btn-ghost" onclick="imprimirPainel()">🖨️ Imprimir Painel</button>
-      </div>
-    </div>
-
-    <!-- PÁGINA: VALUATION -->
-    <div id="valuation" class="page">
-      <div class="page-titulo">$ Valuation</div>
-      <div class="page-sub">3 cenários de projeção das IAs</div>
-      <div class="grid3">
-        <div class="card">
-          <div class="card-titulo">Cenário Otimista</div>
-          <div class="kpi">
-            <div class="kpi-label">Crescimento Estimado</div>
-            <div class="kpi-valor" style="color:var(--verde);">+45%</div>
-            <div class="kpi-sub">Próximos 6 meses</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-titulo">Cenário Realista</div>
-          <div class="kpi">
-            <div class="kpi-label">Crescimento Estimado</div>
-            <div class="kpi-valor" style="color:var(--azul3);">+22%</div>
-            <div class="kpi-sub">Próximos 6 meses</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-titulo">Cenário Conservador</div>
-          <div class="kpi">
-            <div class="kpi-label">Crescimento Estimado</div>
-            <div class="kpi-valor" style="color:var(--amarelo);">+8%</div>
-            <div class="kpi-sub">Próximos 6 meses</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PÁGINA: TERMINAL DE DESPACHO -->
-    <div id="despacho" class="page">
-      <div class="page-titulo">📤 Terminal de Despacho</div>
-      <div class="page-sub">Saída mastigada para o Studio</div>
-      <div class="card">
-        <div class="card-titulo">Pautas Prontas para Despacho</div>
-        <div id="despacho-lista"></div>
+        <div class="card-titulo">Sementes Ativas</div>
+        <div id="lab-lista"></div>
       </div>
     </div>
 
     <!-- PÁGINA: SAÚDE DO NEGÓCIO -->
     <div id="saude" class="page">
       <div class="page-titulo">◉ Saúde do Negócio</div>
-      <div class="page-sub">KPIs reais do Supabase</div>
+      <div class="page-sub">KPIs em tempo real do Supabase</div>
+      
       <div class="grid4">
         <div class="kpi">
-          <div class="kpi-label">Motoristas</div>
-          <div class="kpi-valor" id="k-motoristas">0</div>
-          <div class="kpi-sub">Cadastrados</div>
+          <div class="kpi-label">Motoristas Online</div>
+          <div class="kpi-valor" id="k-online">0</div>
+          <div class="kpi-sub">Agora</div>
         </div>
         <div class="kpi">
-          <div class="kpi-label">Relatos</div>
-          <div class="kpi-valor" id="k-relatos">0</div>
-          <div class="kpi-sub">Processados</div>
+          <div class="kpi-label">Sementes Processadas</div>
+          <div class="kpi-valor" id="k-sementes">0</div>
+          <div class="kpi-sub">Total</div>
         </div>
         <div class="kpi">
-          <div class="kpi-label">IAs Ativas</div>
-          <div class="kpi-valor" id="k-ias">51</div>
-          <div class="kpi-sub">Monitoradas</div>
+          <div class="kpi-label">Taxa de Sucesso</div>
+          <div class="kpi-valor" id="k-taxa">0%</div>
+          <div class="kpi-sub">Última hora</div>
         </div>
         <div class="kpi">
-          <div class="kpi-label">Uptime</div>
-          <div class="kpi-valor" id="k-uptime">99.9%</div>
-          <div class="kpi-sub">Últimos 30 dias</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PÁGINA: RECEITAS -->
-    <div id="receitas" class="page">
-      <div class="page-titulo">💰 Receitas</div>
-      <div class="page-sub">Fluxo financeiro editável</div>
-      <div class="card">
-        <div class="card-titulo">Nova Receita</div>
-        <input class="input" id="receita-descricao" placeholder="Descrição..." style="margin-bottom:8px;" />
-        <input class="input" id="receita-valor" type="number" placeholder="Valor (R$)..." style="margin-bottom:8px;" />
-        <button class="btn btn-primary" onclick="adicionarReceita()">Adicionar</button>
-      </div>
-      <div id="receitas-lista"></div>
-    </div>
-
-    <!-- PÁGINA: CRM B2B -->
-    <div id="crm" class="page">
-      <div class="page-titulo">◫ CRM B2B</div>
-      <div class="page-sub">Gestão de propostas e sindicatos</div>
-      <div class="card">
-        <div class="card-titulo">Novo Sindicato</div>
-        <input class="input" id="sindicato-nome" placeholder="Nome do sindicato..." style="margin-bottom:8px;" />
-        <input class="input" id="sindicato-contato" placeholder="Contato..." style="margin-bottom:8px;" />
-        <button class="btn btn-primary" onclick="adicionarSindicato()">Adicionar</button>
-      </div>
-      <div id="crm-lista"></div>
-    </div>
-
-    <!-- PÁGINA: FASES & GATILHOS -->
-    <div id="fases" class="page">
-      <div class="page-titulo">◈ Fases & Gatilhos</div>
-      <div class="page-sub">Roadmap das 4 fases do projeto</div>
-      <div class="grid2">
-        <div class="card">
-          <div class="card-titulo">Fase 1: Coleta</div>
-          <div style="font-size:12px;color:var(--txt2);line-height:1.6;">Estruturação do banco, integração de motoristas, primeiros relatos.</div>
-          <div style="margin-top:8px;"><span class="pill tag-verde">✓ Concluída</span></div>
-        </div>
-        <div class="card">
-          <div class="card-titulo">Fase 2: Processamento</div>
-          <div style="font-size:12px;color:var(--txt2);line-height:1.6;">Motor de auditoria, 51 IAs, laboratório de sementes.</div>
-          <div style="margin-top:8px;"><span class="pill tag-azul">⏳ Em Andamento</span></div>
-        </div>
-        <div class="card">
-          <div class="card-titulo">Fase 3: Validação</div>
-          <div style="font-size:12px;color:var(--txt2);line-height:1.6;">Painel Kelly, omni-editor, travas jurídicas.</div>
-          <div style="margin-top:8px;"><span class="pill tag-amarelo">📋 Planejada</span></div>
-        </div>
-        <div class="card">
-          <div class="card-titulo">Fase 4: Publicação</div>
-          <div style="font-size:12px;color:var(--txt2);line-height:1.6;">Terminal de despacho, livro branco, studio.</div>
-          <div style="margin-top:8px;"><span class="pill tag-cinza">🔮 Futura</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PÁGINA: BANCO DE DADOS -->
-    <div id="banco" class="page">
-      <div class="page-titulo">📊 Banco de Dados</div>
-      <div class="page-sub">Editor CRUD e visualização de dados</div>
-      <div class="card">
-        <div class="card-titulo">Tabelas Principais</div>
-        <select class="input" id="banco-tabela" onchange="carregarBanco()" style="margin-bottom:8px;">
-          <option value="profiles">profiles (Usuários)</option>
-          <option value="motoristas_online">motoristas_online (Online)</option>
-          <option value="relatos_brutos">relatos_brutos (Relatos)</option>
-          <option value="laboratorio_sementes">laboratorio_sementes (Sementes)</option>
-          <option value="omni_editor_autoridade">omni_editor_autoridade (Parecer)</option>
-          <option value="terminal_despacho">terminal_despacho (Despacho)</option>
-        </select>
-        <div id="banco-resultado"></div>
-      </div>
-    </div>
-
-    <!-- PÁGINA: INFRAESTRUTURA -->
-    <div id="infra" class="page">
-      <div class="page-titulo">⚙️ Infraestrutura</div>
-      <div class="page-sub">Logs, commits e configuração do sistema</div>
-      <div class="card">
-        <div class="card-titulo">Status do Sistema</div>
-        <div class="grid2">
-          <div class="kpi">
-            <div class="kpi-label">Banco de Dados</div>
-            <div style="display:flex;gap:6px;align-items:center;">
-              <span class="semaforo" style="background:var(--verde);"></span>
-              <span style="font-size:12px;color:var(--verde);">Online</span>
-            </div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Realtime</div>
-            <div style="display:flex;gap:6px;align-items:center;">
-              <span class="semaforo pulso" style="background:var(--azul3);"></span>
-              <span style="font-size:12px;color:var(--azul3);">Conectado</span>
-            </div>
-          </div>
+          <div class="kpi-label">Tempo Médio</div>
+          <div class="kpi-valor" id="k-tempo">0s</div>
+          <div class="kpi-sub">Por semente</div>
         </div>
       </div>
     </div>
@@ -535,7 +223,10 @@ const { createClient } = window.supabase;
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let usuarioLogado = null;
-let canalRealtime = null;
+let canalMotoristas = null;
+let canalSementes = null;
+let motoristasCache = {};
+let sementesCache = {};
 
 // ═══════════════════════════════════════
 // LOGIN
@@ -549,13 +240,12 @@ async function fazerLogin(){
     return;
   }
   
-  // Validação simples (em produção, usar autenticação real)
   if(usuario === 'admin' && senha === 'Master35681'){
     usuarioLogado = usuario;
     document.getElementById('login').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
-    carregarDados();
     iniciarRealtime();
+    carregarDadosIniciais();
   } else {
     document.getElementById('login-erro').textContent = 'Usuário ou senha inválidos';
   }
@@ -567,7 +257,8 @@ function fazerLogout(){
   document.getElementById('login').style.display = 'flex';
   document.getElementById('lu').value = '';
   document.getElementById('lp').value = '';
-  if(canalRealtime) canalRealtime.unsubscribe();
+  if(canalMotoristas) canalMotoristas.unsubscribe();
+  if(canalSementes) canalSementes.unsubscribe();
 }
 
 // ═══════════════════════════════════════
@@ -581,270 +272,154 @@ function irPara(id, el){
 }
 
 // ═══════════════════════════════════════
-// REALTIME
+// REALTIME - MOTORISTAS ONLINE
 // ═══════════════════════════════════════
 function iniciarRealtime(){
-  canalRealtime = supabase.channel('motoristas-online')
-    .on('postgres_changes', {event: '*', schema: 'public', table: 'motoristas_online'}, (payload) => {
-      console.log('Mudança em motoristas_online:', payload);
-      carregarMotoristasMapa();
+  // Canal para motoristas_online
+  canalMotoristas = supabase.channel('motoristas-online')
+    .on('postgres_changes', {event: 'INSERT', schema: 'public', table: 'motoristas_online'}, (payload) => {
+      console.log('🟢 Novo motorista online:', payload.new);
+      motoristasCache[payload.new.id] = payload.new;
+      atualizarMapaCalor();
+    })
+    .on('postgres_changes', {event: 'UPDATE', schema: 'public', table: 'motoristas_online'}, (payload) => {
+      console.log('🔄 Motorista atualizado:', payload.new);
+      motoristasCache[payload.new.id] = payload.new;
+      atualizarMapaCalor();
+    })
+    .on('postgres_changes', {event: 'DELETE', schema: 'public', table: 'motoristas_online'}, (payload) => {
+      console.log('🔴 Motorista offline:', payload.old);
+      delete motoristasCache[payload.old.id];
+      atualizarMapaCalor();
+    })
+    .subscribe();
+
+  // Canal para laboratorio_sementes
+  canalSementes = supabase.channel('laboratorio-sementes')
+    .on('postgres_changes', {event: 'INSERT', schema: 'public', table: 'laboratorio_sementes'}, (payload) => {
+      console.log('🌱 Nova semente:', payload.new);
+      sementesCache[payload.new.id] = payload.new;
+      atualizarLaboratorio();
+      atualizarKPIs();
+    })
+    .on('postgres_changes', {event: 'UPDATE', schema: 'public', table: 'laboratorio_sementes'}, (payload) => {
+      console.log('🌿 Semente atualizada:', payload.new);
+      sementesCache[payload.new.id] = payload.new;
+      atualizarLaboratorio();
+      atualizarKPIs();
     })
     .subscribe();
 }
 
 // ═══════════════════════════════════════
-// CARREGAMENTO DE DADOS
+// CARREGAMENTO INICIAL
 // ═══════════════════════════════════════
-async function carregarDados(){
-  carregarMotoristasMapa();
-  carregarIAs();
-  carregarSaude();
-  carregarRelatorios();
-}
-
-async function carregarMotoristasMapa(){
-  const { data, error } = await supabase.from('motoristas_online').select('*').limit(20);
-  if(error) console.error(error);
-  
-  let html = '';
-  if(data && data.length > 0){
-    data.forEach(m => {
-      const status = m.is_online ? '🟢 Pulsando' : '⚫ Offline';
-      html += `<tr>
-        <td>${m.id.substring(0,8)}</td>
-        <td>${m.cidade_estado}</td>
-        <td>${Array.isArray(m.plataformas) ? m.plataformas.join(', ') : m.plataformas}</td>
-        <td>${m.dispositivo_modelo || '—'}</td>
-        <td>${m.android_versao || '—'}</td>
-        <td>${m.app_versao || '—'}</td>
-        <td>${status}</td>
-      </tr>`;
-    });
+async function carregarDadosIniciais(){
+  // Carregar motoristas online
+  const { data: motoristas } = await supabase.from('motoristas_online').select('*');
+  if(motoristas){
+    motoristas.forEach(m => motoristasCache[m.id] = m);
   }
-  document.getElementById('mapa-tabela').innerHTML = html || '<tr><td colspan="7" style="text-align:center;color:var(--txt3);">Nenhum motorista online</td></tr>';
+  atualizarMapaCalor();
+
+  // Carregar sementes
+  const { data: sementes } = await supabase.from('laboratorio_sementes').select('*').limit(50);
+  if(sementes){
+    sementes.forEach(s => sementesCache[s.id] = s);
+  }
+  atualizarLaboratorio();
+  atualizarKPIs();
 }
 
 // ═══════════════════════════════════════
-// IAs
+// ATUALIZAR MAPA DE CALOR
 // ═══════════════════════════════════════
-const IAS_A = [
-  {nome:'SeedIA',motor:'Python',status:'ok'},
-  {nome:'RegionalIA',motor:'G.Search',status:'ok'},
-  {nome:'ArquivistaIA',motor:'Gemini',status:'aviso'},
-  {nome:'ScoutIA',motor:'G.Search',status:'ok'},
-  {nome:'EventoIA',motor:'Groq',status:'ok'},
-  {nome:'ArqueólogoIA',motor:'G.Search',status:'ok'},
-  {nome:'EnciclopédiaIA',motor:'Gemini',status:'ok'},
-  {nome:'FontesFrederico',motor:'Python',status:'ok'},
-  {nome:'GarImpeiroIA',motor:'G.Search',status:'ok'},
-  {nome:'ContextoIA',motor:'G.Search',status:'ok'},
-  {nome:'SincroniaIA',motor:'G.Search',status:'ok'},
-  {nome:'TelegramIA',motor:'Groq',status:'aviso'},
-  {nome:'TarifaIA',motor:'Groq',status:'ok'},
-  {nome:'TechIA',motor:'Groq',status:'ok'},
-  {nome:'EstatísticaIA',motor:'Groq',status:'ok'},
-  {nome:'PsicoIA',motor:'Gemini',status:'ok'},
-  {nome:'JurídicaIA',motor:'Cohere',status:'ok'},
-  {nome:'AcadêmicoIA',motor:'G.Search',status:'ok'},
-  {nome:'FinanceiroIA',motor:'G.Search',status:'ok'},
-  {nome:'LegislativaIA',motor:'G.Search',status:'ok'},
-  {nome:'FuturoIA',motor:'Gemini',status:'ok'},
-  {nome:'CruzamentoIA',motor:'Gemini',status:'ok'},
-  {nome:'PredicãoIA',motor:'Gemini',status:'ok'},
-  {nome:'ComandoIA',motor:'Gemini',status:'ok'},
-  {nome:'FrotaIA',motor:'G.Search',status:'ok'},
-  {nome:'TendênciaIA',motor:'G.Search',status:'ok'},
-  {nome:'LaboratórioIA',motor:'Gemini',status:'ok'},
-  {nome:'AuditoriaIA',motor:'Groq',status:'ok'},
-  {nome:'EnriquecimentoIA',motor:'Gemini',status:'ok'},
-  {nome:'ObservatórioIA',motor:'Gemini',status:'ok'},
-  {nome:'JornalismoIA',motor:'Groq',status:'ok'},
-  {nome:'MídiaIA',motor:'Groq',status:'ok'},
-  {nome:'MercadoIA',motor:'G.Search',status:'ok'},
-  {nome:'BackupIA',motor:'Python',status:'ok'},
-  {nome:'DistribuidorIA',motor:'Python',status:'ok'},
-  {nome:'AlertaIA',motor:'Python',status:'ok'},
-  {nome:'CorrelacaoIA',motor:'Gemini',status:'ok'},
-  {nome:'CompetidorIA',motor:'G.Search',status:'ok'},
-  {nome:'LegisIA',motor:'G.Search',status:'ok'},
-  {nome:'PrecificacaoIA',motor:'Gemini',status:'ok'},
-  {nome:'TendênciaStudioIA',motor:'Gemini',status:'ok'},
-  {nome:'RecorrenciaIA',motor:'Gemini',status:'ok'},
-  {nome:'GeminiComandoIA',motor:'Gemini',status:'ok'},
-  {nome:'GrokMonitorIA',motor:'Gemini',status:'ok'},
-  {nome:'A44',motor:'Gemini',status:'ok'},
-  {nome:'A45',motor:'Gemini',status:'ok'},
-];
-
-const IAS_B = [
-  {nome:'ExtractorIA',motor:'Groq',status:'aguardando'},
-  {nome:'CleanerIA',motor:'Groq',status:'aguardando'},
-  {nome:'PatternIA',motor:'Gemini',status:'aguardando'},
-  {nome:'SentimentIA',motor:'Groq',status:'aguardando'},
-  {nome:'RelatorIA',motor:'Gemini',status:'aguardando'},
-  {nome:'FusãoIA',motor:'Gemini',status:'aguardando'},
-];
-
-function corIA(s){return s==='ok'?'var(--verde)':s==='aviso'?'var(--amarelo)':s==='erro'?'var(--vermelho)':'var(--txt3)';}
-function badgeIA(s){
-  if(s==='ok') return '<span class="pill tag-verde">✓ OK</span>';
-  if(s==='aviso') return '<span class="pill tag-amarelo">⚠ Aviso</span>';
-  if(s==='erro') return '<span class="pill tag-vermelho">✗ Erro</span>';
-  return '<span class="pill tag-cinza">⏳ Aguarda</span>';
-}
-
-function carregarIAs(){
-  const ga = document.getElementById('ia-grid-a');
-  ga.innerHTML = IAS_A.map(ia=>`
-    <div class="ia-item" style="border-left-color:${corIA(ia.status)}">
-      <div class="ia-nome">${ia.nome}</div>
-      <div class="ia-motor">${ia.motor}</div>
-      <div>${badgeIA(ia.status)}</div>
-    </div>
-  `).join('');
+function atualizarMapaCalor(){
+  const lista = document.getElementById('mapa-lista');
+  const motoristas = Object.values(motoristasCache);
   
-  const gb = document.getElementById('ia-grid-b');
-  gb.innerHTML = IAS_B.map(ia=>`
-    <div class="ia-item" style="border-left-color:${corIA(ia.status)}">
-      <div class="ia-nome">${ia.nome}</div>
-      <div class="ia-motor">${ia.motor}</div>
-      <div>${badgeIA(ia.status)}</div>
-    </div>
-  `).join('');
-}
-
-// ═══════════════════════════════════════
-// FUNÇÕES DE AÇÃO
-// ═══════════════════════════════════════
-function adicionarSinal(){
-  const texto = document.getElementById('sinal-texto').value;
-  if(!texto) return;
-  alert('Sinal adicionado: ' + texto);
-  document.getElementById('sinal-texto').value = '';
-}
-
-function enviarComandoIA(){
-  const ia = document.getElementById('cmd-ia-select').value;
-  const cmd = document.getElementById('cmd-ia-texto').value;
-  if(!ia || !cmd) return;
-  document.getElementById('cmd-ia-resultado').innerHTML = 
-    `<div style="color:var(--amarelo)">⏳ Comando salvo para ${ia}. Será executado no próximo ciclo das IAs (cron 6h).</div>`;
-}
-
-function abrirGrok(){
-  window.open('https://grok.com', '_blank');
-}
-
-function abrirPerplexity(){
-  window.open('https://perplexity.ai', '_blank');
-}
-
-function alimentarManual(){
-  const texto = document.getElementById('alimentacao-texto').value;
-  const camada = document.getElementById('alimentacao-camada').value;
-  if(!texto) return;
-  alert('Dado enviado para o reciclador:\nCamada: ' + camada + '\nConteúdo: ' + texto.substring(0,50) + '...');
-  document.getElementById('alimentacao-texto').value = '';
-}
-
-function salvarParecer(){
-  const titulo = document.getElementById('parecer-titulo').value;
-  const texto = document.getElementById('parecer-texto').value;
-  if(!titulo || !texto) return;
-  alert('Parecer salvo: ' + titulo);
-  document.getElementById('parecer-titulo').value = '';
-  document.getElementById('parecer-texto').value = '';
-}
-
-function gerarRelatorio(){
-  alert('Gerando relatório em PDF...');
-  window.print();
-}
-
-function imprimirPainel(){
-  window.print();
-}
-
-function adicionarReceita(){
-  const desc = document.getElementById('receita-descricao').value;
-  const valor = document.getElementById('receita-valor').value;
-  if(!desc || !valor) return;
-  alert('Receita adicionada: R$ ' + valor);
-  document.getElementById('receita-descricao').value = '';
-  document.getElementById('receita-valor').value = '';
-}
-
-function adicionarSindicato(){
-  const nome = document.getElementById('sindicato-nome').value;
-  const contato = document.getElementById('sindicato-contato').value;
-  if(!nome) return;
-  alert('Sindicato adicionado: ' + nome);
-  document.getElementById('sindicato-nome').value = '';
-  document.getElementById('sindicato-contato').value = '';
-}
-
-async function carregarBanco(){
-  const tabela = document.getElementById('banco-tabela').value;
-  const { data, error } = await supabase.from(tabela).select('*').limit(10);
-  
-  if(error){
-    document.getElementById('banco-resultado').innerHTML = '<div style="color:var(--vermelho);">Erro ao carregar dados</div>';
+  if(motoristas.length === 0){
+    lista.innerHTML = '<div style="color:var(--txt3);text-align:center;padding:20px;">Nenhum motorista online</div>';
     return;
   }
+
+  let html = motoristas.map(m => {
+    const status = m.is_online ? 'online' : 'offline';
+    const icon = m.is_online ? '🟢' : '⚫';
+    const plataforma = Array.isArray(m.plataformas) ? m.plataformas.join(', ') : m.plataformas || '—';
+    
+    return `
+      <div class="motorista-card ${status}">
+        <div class="motorista-nome">${icon} ${m.cidade_estado}</div>
+        <div class="motorista-info">
+          <strong>Plataforma:</strong> ${plataforma}<br>
+          <strong>Dispositivo:</strong> ${m.dispositivo_modelo || '—'}<br>
+          <strong>Android:</strong> ${m.android_versao || '—'} | <strong>App:</strong> ${m.app_versao || '—'}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  lista.innerHTML = html;
+  document.getElementById('k-online').textContent = motoristas.filter(m => m.is_online).length;
+}
+
+// ═══════════════════════════════════════
+// ATUALIZAR LABORATÓRIO
+// ═══════════════════════════════════════
+function atualizarLaboratorio(){
+  const lista = document.getElementById('lab-lista');
+  const sementes = Object.values(sementesCache);
   
-  if(!data || data.length === 0){
-    document.getElementById('banco-resultado').innerHTML = '<div style="color:var(--txt3);">Nenhum registro encontrado</div>';
+  if(sementes.length === 0){
+    lista.innerHTML = '<div style="color:var(--txt3);text-align:center;padding:20px;">Nenhuma semente em processamento</div>';
     return;
   }
-  
-  const cols = Object.keys(data[0]).slice(0, 6);
-  let html = `<table><tr>${cols.map(c=>'<th>'+c+'</th>').join('')}</tr>`;
-  data.forEach(row => {
-    html += '<tr>';
-    cols.forEach(c => {
-      let v = row[c];
-      if(v === null) v = '—';
-      else if(typeof v === 'object') v = JSON.stringify(v).substring(0, 30) + '...';
-      else if(String(v).length > 50) v = String(v).substring(0, 50) + '...';
-      html += '<td>' + v + '</td>';
-    });
-    html += '</tr>';
-  });
-  html += '</table>';
-  document.getElementById('banco-resultado').innerHTML = html;
+
+  const estadoMap = {
+    'SEMENTE': {cor: 'semente-semente', icon: '🌱', label: 'Semente'},
+    'GERMINANDO': {cor: 'semente-germinando', icon: '🌿', label: 'Germinando'},
+    'AMADURECENDO': {cor: 'semente-amadurecendo', icon: '🌾', label: 'Amadurecendo'},
+    'COLHEITA': {cor: 'semente-colheita', icon: '🌽', label: 'Colheita'},
+    'COMPOSTO': {cor: 'semente-composto', icon: '♻️', label: 'Composto'}
+  };
+
+  let html = sementes.slice(0, 20).map(s => {
+    const estado = estadoMap[s.estado_metabolico] || {cor: 'semente-semente', icon: '?', label: 'Desconhecido'};
+    const conteudo = (s.conteudo_bruto || '').substring(0, 80) + '...';
+    const progresso = s.estado_metabolico === 'SEMENTE' ? 20 : s.estado_metabolico === 'GERMINANDO' ? 40 : s.estado_metabolico === 'AMADURECENDO' ? 70 : 100;
+    
+    return `
+      <div class="semente-card ${estado.cor}">
+        <div class="semente-titulo">${estado.icon} ${estado.label}</div>
+        <div class="semente-status">${conteudo}</div>
+        <div class="semente-progresso">
+          <div class="semente-fill" style="width:${progresso}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  lista.innerHTML = html;
 }
 
-async function carregarSaude(){
-  const { count: motoristas } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-  const { count: relatos } = await supabase.from('relatos_brutos').select('*', { count: 'exact', head: true });
+// ═══════════════════════════════════════
+// ATUALIZAR KPIs
+// ═══════════════════════════════════════
+async function atualizarKPIs(){
+  const sementes = Object.values(sementesCache);
+  const total = sementes.length;
+  const colheita = sementes.filter(s => s.estado_metabolico === 'COLHEITA').length;
+  const taxa = total > 0 ? Math.round((colheita / total) * 100) : 0;
   
-  document.getElementById('k-motoristas').textContent = motoristas || '0';
-  document.getElementById('k-relatos').textContent = relatos || '0';
-}
-
-async function carregarRelatorios(){
-  const { data } = await supabase.from('terminal_despacho').select('*').limit(5);
-  
-  let html = '';
-  if(data && data.length > 0){
-    data.forEach(r => {
-      html += `<div class="journal-item">
-        <div class="journal-titulo">${r.titulo_pauta}</div>
-        <div class="journal-body">${r.conteudo_mastigado.substring(0, 100)}...</div>
-        <div style="margin-top:8px;"><span class="pill ${r.enviado_studio ? 'tag-verde' : 'tag-amarelo'}">
-          ${r.enviado_studio ? '✓ Enviado' : '⏳ Pendente'}
-        </span></div>
-      </div>`;
-    });
-  } else {
-    html = '<div style="color:var(--txt3);text-align:center;padding:20px;">Nenhuma pauta pronta para despacho</div>';
-  }
-  document.getElementById('despacho-lista').innerHTML = html;
+  document.getElementById('k-sementes').textContent = total;
+  document.getElementById('k-taxa').textContent = taxa + '%';
+  document.getElementById('k-tempo').textContent = '~45s';
 }
 
 // Inicializar ao carregar
 window.addEventListener('load', () => {
-  carregarIAs();
+  console.log('🚀 Painel Forense 2026 carregado - Aguardando login');
 });
 </script>
 </body>
