@@ -2,191 +2,166 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Observatório 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observatório da Mobilidade — Painel</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { width: 100%; height: 100%; }
-body {
-  background: #020B18;
-  color: #F1F5F9;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  overflow-x: hidden;
+:root {
+  --bg:#020B18;--bg1:#0A1628;--bg2:#0F2040;--bg3:#1E3A5F;
+  --azul:#1D4ED8;--azul2:#3B82F6;--azul3:#60A5FA;
+  --verde:#10B981;--vermelho:#EF4444;--amarelo:#F59E0B;
+  --roxo:#8B5CF6;--rosa:#EC4899;--ciano:#06B6D4;
+  --txt:#F1F5F9;--txt2:#94A3B8;--txt3:#475569;
+  --borda:#0F2040;
 }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:'SF Mono','Fira Code',monospace;min-height:100vh;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg1);}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px;}
 
 /* LOGIN */
-#login {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 20px;
-  background: #020B18;
-}
-.login-box {
-  background: #0A1628;
-  border: 1px solid #1E3A5F;
-  border-radius: 12px;
-  padding: 30px 20px;
-  width: 100%;
-  max-width: 320px;
-}
-.login-logo { font-size: 40px; text-align: center; margin-bottom: 12px; }
-.login-titulo { font-size: 16px; font-weight: 700; text-align: center; margin-bottom: 4px; }
-.login-sub { font-size: 10px; color: #60A5FA; text-align: center; margin-bottom: 24px; }
-.login-input {
-  width: 100%;
-  background: #0F2040;
-  border: 1px solid #0F2040;
-  border-radius: 6px;
-  padding: 12px;
-  color: #F1F5F9;
-  font-size: 14px;
-  margin-bottom: 12px;
-  font-family: inherit;
-}
-.login-input:focus { outline: none; border-color: #3B82F6; }
-.login-btn {
-  width: 100%;
-  background: #1D4ED8;
-  border: none;
-  border-radius: 6px;
-  padding: 12px;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-}
-.login-btn:active { background: #3B82F6; }
-.login-erro { color: #EF4444; font-size: 11px; text-align: center; margin-top: 8px; }
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:24px;}
+.login-box{background:var(--bg1);border:1px solid var(--bg3);border-radius:16px;padding:40px;width:360px;}
+.login-logo{font-size:48px;text-align:center;margin-bottom:8px;}
+.login-titulo{font-size:18px;font-weight:800;color:var(--txt);text-align:center;letter-spacing:2px;margin-bottom:4px;}
+.login-sub{font-size:11px;color:var(--azul3);text-align:center;letter-spacing:2px;margin-bottom:32px;text-transform:uppercase;}
+.login-input{width:100%;background:var(--bg2);border:1px solid var(--borda);border-radius:8px;padding:12px 16px;color:var(--txt);font-size:14px;font-family:inherit;outline:none;margin-bottom:12px;transition:border .2s;}
+.login-input:focus{border-color:var(--azul2);}
+.login-btn{width:100%;background:var(--azul);border:none;border-radius:8px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:background .2s;}
+.login-btn:hover{background:var(--azul2);}
+.login-erro{color:var(--vermelho);font-size:12px;text-align:center;margin-top:8px;}
 
-/* APP */
-#app { display: none; }
-.app-header {
-  background: #0A1628;
-  border-bottom: 1px solid #1E3A5F;
-  padding: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.app-logo { font-size: 12px; font-weight: 700; }
-.app-logout { background: transparent; border: 1px solid #1E3A5F; color: #94A3B8; padding: 6px 12px; border-radius: 4px; font-size: 11px; cursor: pointer; }
-.app-logout:active { color: #EF4444; border-color: #EF4444; }
+/* LAYOUT */
+#app{display:none;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--bg1);border-right:1px solid var(--borda);display:flex;flex-direction:column;z-index:100;}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--borda);}
+.sidebar-logo-text{font-size:13px;font-weight:800;color:var(--txt);letter-spacing:2px;}
+.sidebar-logo-sub{font-size:9px;color:var(--azul3);letter-spacing:2px;margin-top:2px;text-transform:uppercase;}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 0;}
+.nav-section{padding:8px 20px 4px;font-size:9px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;font-size:12px;color:var(--txt3);transition:all .2s;border-left:2px solid transparent;}
+.nav-item:hover{color:var(--txt2);background:var(--bg2);}
+.nav-item.ativo{color:var(--azul3);border-left-color:var(--azul2);background:rgba(29,78,216,.1);}
+.nav-item .ni{font-size:14px;width:18px;text-align:center;}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--borda);}
+.logout-btn{width:100%;background:transparent;border:1px solid var(--borda);border-radius:6px;padding:8px;color:var(--txt3);font-size:11px;cursor:pointer;font-family:inherit;transition:all .2s;}
+.logout-btn:hover{border-color:var(--vermelho);color:var(--vermelho);}
+.main{margin-left:220px;padding:28px 32px;min-height:100vh;}
+.page{display:none;}
+.page.ativa{display:block;}
+.page-titulo{font-size:22px;font-weight:800;color:var(--txt);letter-spacing:.5px;margin-bottom:4px;}
+.page-sub{font-size:11px;color:var(--azul3);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
 
-.app-content { padding: 12px; }
-.page { display: none; }
-.page.ativa { display: block; }
+/* CARDS */
+.card{background:var(--bg1);border:1px solid var(--borda);border-radius:12px;padding:20px;margin-bottom:16px;}
+.card-titulo{font-size:10px;color:var(--txt3);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+.kpi{background:var(--bg2);border-radius:10px;padding:16px;}
+.kpi-label{font-size:10px;color:var(--txt3);letter-spacing:1px;margin-bottom:6px;}
+.kpi-valor{font-size:24px;font-weight:900;line-height:1;margin-bottom:4px;}
+.kpi-sub{font-size:10px;color:var(--txt3);}
 
-.page-titulo { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-.page-sub { font-size: 10px; color: #60A5FA; margin-bottom: 16px; }
+/* TAGS */
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;border:1px solid;}
+.tag-verde{background:rgba(16,185,129,.15);color:var(--verde);border-color:rgba(16,185,129,.3);}
+.tag-azul{background:rgba(59,130,246,.15);color:var(--azul3);border-color:rgba(59,130,246,.3);}
+.tag-amarelo{background:rgba(245,158,11,.15);color:var(--amarelo);border-color:rgba(245,158,11,.3);}
+.tag-vermelho{background:rgba(239,68,68,.15);color:var(--vermelho);border-color:rgba(239,68,68,.3);}
+.tag-roxo{background:rgba(139,92,246,.15);color:var(--roxo);border-color:rgba(139,92,246,.3);}
+.tag-cinza{background:rgba(71,85,105,.3);color:var(--txt3);border-color:var(--borda);}
 
-.card {
-  background: #0A1628;
-  border: 1px solid #1E3A5F;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
-}
-.card-titulo { font-size: 9px; color: #475569; text-transform: uppercase; margin-bottom: 12px; }
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap;}
+.tab-btn{padding:7px 14px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;background:var(--bg1);border:1px solid var(--borda);color:var(--txt3);font-family:inherit;transition:all .2s;}
+.tab-btn.ativo{background:var(--azul);border-color:var(--azul);color:#fff;}
+.tab-btn:hover:not(.ativo){border-color:var(--azul2);color:var(--txt2);}
+.tab-panel{display:none;}
+.tab-panel.ativo{display:block;}
 
-.kpi {
-  background: #0F2040;
-  border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 8px;
-}
-.kpi-label { font-size: 9px; color: #475569; margin-bottom: 4px; }
-.kpi-valor { font-size: 20px; font-weight: 900; }
-.kpi-sub { font-size: 9px; color: #475569; }
+/* TABELA */
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th{padding:8px 12px;text-align:left;color:var(--txt3);font-weight:600;border-bottom:1px solid var(--borda);background:var(--bg2);white-space:nowrap;font-size:10px;letter-spacing:1px;}
+td{padding:9px 12px;border-bottom:1px solid var(--bg2);color:var(--txt2);}
+tr:hover td{background:var(--bg2);}
 
-.motorista-item {
-  background: #0F2040;
-  border-left: 3px solid #10B981;
-  border-radius: 4px;
-  padding: 10px;
-  margin-bottom: 8px;
-  font-size: 12px;
-}
-.motorista-item.offline { border-left-color: #475569; }
-.motorista-nome { font-weight: 700; margin-bottom: 4px; }
-.motorista-info { font-size: 11px; color: #94A3B8; }
+/* INPUT / BUTTON */
+.input{background:var(--bg2);border:1px solid var(--borda);border-radius:6px;padding:8px 12px;color:var(--txt);font-size:13px;font-family:inherit;outline:none;transition:border .2s;width:100%;}
+.input:focus{border-color:var(--azul2);}
+textarea.input{resize:vertical;min-height:80px;}
+.btn{padding:8px 16px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;border:1px solid;}
+.btn-primary{background:var(--azul);border-color:var(--azul);color:#fff;}
+.btn-primary:hover{background:var(--azul2);}
+.btn-ghost{background:transparent;border-color:var(--borda);color:var(--txt2);}
+.btn-ghost:hover{border-color:var(--azul2);color:var(--azul3);}
+.btn-verde{background:rgba(16,185,129,.15);border-color:var(--verde);color:var(--verde);}
+.btn-roxo{background:rgba(139,92,246,.15);border-color:var(--roxo);color:var(--roxo);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.row-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 
-.semente-item {
-  background: #0F2040;
-  border-left: 3px solid #3B82F6;
-  border-radius: 4px;
-  padding: 10px;
-  margin-bottom: 8px;
-}
-.semente-titulo { font-weight: 700; margin-bottom: 4px; }
-.semente-status { font-size: 11px; color: #94A3B8; margin-bottom: 6px; }
-.semente-progress { height: 3px; background: #1E3A5F; border-radius: 2px; overflow: hidden; }
-.semente-fill { height: 100%; background: #3B82F6; transition: width 0.3s; }
+/* ALERTA */
+.alerta{padding:12px 16px;border-radius:8px;border-left:3px solid;margin-bottom:12px;font-size:12px;}
+.alerta-info{background:rgba(29,78,216,.1);border-color:var(--azul2);color:var(--azul3);}
+.alerta-aviso{background:rgba(245,158,11,.1);border-color:var(--amarelo);color:var(--amarelo);}
+.alerta-erro{background:rgba(239,68,68,.1);border-color:var(--vermelho);color:var(--vermelho);}
+.alerta-ok{background:rgba(16,185,129,.1);border-color:var(--verde);color:var(--verde);}
 
-.tabs {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 12px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-.tab-btn {
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 11px;
-  background: #0F2040;
-  border: 1px solid #1E3A5F;
-  color: #94A3B8;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.tab-btn.ativo {
-  background: #1D4ED8;
-  border-color: #1D4ED8;
-  color: #fff;
-}
+/* SEMÁFORO */
+.semaforo{width:10px;height:10px;border-radius:50%;display:inline-block;}
+@keyframes pulso{0%,100%{opacity:1}50%{opacity:.3}}
+.pulso{animation:pulso 1.5s infinite;}
 
-.realtime-indicator {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  font-size: 11px;
-  padding: 8px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-radius: 4px;
-  margin-bottom: 12px;
-}
-.realtime-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #10B981;
-  animation: pulse 2s infinite;
-}
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+/* IA GRID */
+.ia-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px;}
+.ia-item{background:var(--bg2);border-radius:8px;padding:12px;border-left:3px solid;}
+.ia-nome{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px;}
+.ia-motor{font-size:10px;color:var(--txt3);margin-bottom:6px;}
+.ia-status{font-size:10px;font-weight:700;}
 
-.empty-state {
-  text-align: center;
-  color: #475569;
-  padding: 24px 12px;
-  font-size: 12px;
-}
+/* CAMADAS DE RISCO */
+.camada-1{border-left:3px solid var(--verde)!important;}
+.camada-2{border-left:3px solid var(--amarelo)!important;}
+.camada-3{border-left:3px solid var(--vermelho)!important;}
+.camada-4{border-left:3px solid #000!important;}
 
-@media (max-width: 480px) {
-  body { font-size: 13px; }
-  .login-box { padding: 24px 16px; }
-  .page-titulo { font-size: 14px; }
-  .kpi-valor { font-size: 18px; }
-}
+/* JOURNAL */
+.journal-item{background:var(--bg2);border-radius:10px;padding:16px;margin-bottom:12px;border-left:3px solid var(--azul2);}
+.journal-meta{display:flex;gap:12px;align-items:center;margin-bottom:8px;font-size:10px;color:var(--txt3);}
+.journal-titulo{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:6px;}
+.journal-body{font-size:12px;color:var(--txt2);line-height:1.6;}
+
+/* LABORATÓRIO */
+.lab-stage{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;}
+.lab-col{min-width:180px;background:var(--bg2);border-radius:10px;padding:12px;}
+.lab-col-titulo{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--borda);}
+.lab-card{background:var(--bg1);border-radius:8px;padding:10px;margin-bottom:8px;font-size:11px;cursor:pointer;transition:all .2s;border:1px solid var(--borda);}
+.lab-card:hover{border-color:var(--azul2);}
+.lab-confianca{height:4px;background:var(--bg3);border-radius:2px;margin-top:6px;overflow:hidden;}
+.lab-fill{height:100%;border-radius:2px;transition:width .5s;}
+
+/* GEMINI COMANDO */
+.gemini-card{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(59,130,246,.1));border:1px solid rgba(139,92,246,.3);border-radius:12px;padding:20px;margin-bottom:16px;}
+.gemini-tipo{font-size:9px;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+.gemini-titulo{font-size:16px;font-weight:800;color:var(--txt);margin-bottom:8px;}
+.gemini-contexto{font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.5;}
+.gemini-prompt{background:var(--bg);border-radius:8px;padding:12px;font-size:11px;color:var(--txt2);margin-bottom:12px;white-space:pre-wrap;word-break:break-all;max-height:120px;overflow-y:auto;}
+
+/* GROK / PERPLEXITY */
+.tool-card{background:var(--bg2);border:1px solid var(--borda);border-radius:10px;padding:16px;margin-bottom:12px;}
+.tool-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.tool-icon{font-size:24px;}
+.tool-nome{font-size:14px;font-weight:700;color:var(--txt);}
+.tool-desc{font-size:11px;color:var(--txt3);}
+
+/* ALIMENTAÇÃO MANUAL */
+.feed-area{background:var(--bg2);border-radius:10px;padding:16px;margin-bottom:12px;}
+
+/* PRINT */
+@media print{.sidebar,.tabs,.btn,.nav-item{display:none!important;}.main{margin-left:0;padding:0;}.card{break-inside:avoid;}}
+
+/* RESPONSIVE */
+@media(max-width:768px){.sidebar{width:60px;}.sidebar-logo-text,.sidebar-logo-sub,.nav-item span,.nav-section{display:none;}.main{margin-left:60px;padding:16px;}.grid2,.grid3,.grid4{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -196,226 +171,1378 @@ body {
   <div class="login-box">
     <div class="login-logo">📡</div>
     <div class="login-titulo">OBSERVATÓRIO</div>
-    <div class="login-sub">Painel Forense 2026</div>
-    <input class="login-input" id="lu" type="text" placeholder="Usuário" autocomplete="off" />
-    <input class="login-input" id="lp" type="password" placeholder="Senha" autocomplete="off" />
-    <button class="login-btn" onclick="fazerLogin()">Entrar</button>
-    <div class="login-erro" id="login-erro"></div>
+    <div class="login-sub">da Mobilidade</div>
+    <input class="login-input" id="lu" type="text" placeholder="Usuário" onkeydown="if(event.key==='Enter')entrar()">
+    <input class="login-input" id="lp" type="password" placeholder="Senha" onkeydown="if(event.key==='Enter')entrar()">
+    <button class="login-btn" onclick="entrar()">ENTRAR</button>
+    <div class="login-erro" id="lerro"></div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-  <div class="app-header">
-    <div class="app-logo">📡 OBSERVATÓRIO</div>
-    <button class="app-logout" onclick="fazerLogout()">Sair</button>
-  </div>
-
-  <div class="app-content">
-    <!-- PÁGINA: MAPA DE CALOR -->
-    <div id="mapa" class="page ativa">
-      <div class="page-titulo">🗺️ Mapa de Calor</div>
-      <div class="page-sub">Motoristas online em tempo real</div>
-      <div class="realtime-indicator">
-        <span class="realtime-dot"></span>
-        <span>Conectado ao Supabase</span>
-      </div>
-      <div class="card">
-        <div class="card-titulo">Motoristas Online</div>
-        <div id="mapa-lista"></div>
-      </div>
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">OBSERVATÓRIO</div>
+      <div class="sidebar-logo-sub">da Mobilidade</div>
     </div>
-
-    <!-- PÁGINA: LABORATÓRIO -->
-    <div id="laboratorio" class="page">
-      <div class="page-titulo">🌱 Laboratório</div>
-      <div class="page-sub">Sementes em processamento</div>
-      <div class="realtime-indicator">
-        <span class="realtime-dot"></span>
-        <span>Monitorando 51 IAs</span>
-      </div>
-      <div class="card">
-        <div class="card-titulo">Sementes Ativas</div>
-        <div id="lab-lista"></div>
-      </div>
+    <div class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <div class="nav-item ativo" onclick="ir('saude')"><span class="ni">◉</span><span>Saúde do Negócio</span></div>
+      <div class="nav-item" onclick="ir('ias')"><span class="ni">🤖</span><span>Monitor IAs</span></div>
+      <div class="nav-item" onclick="ir('banco')"><span class="ni">📊</span><span>Banco de Dados</span></div>
+      <div class="nav-item" onclick="ir('infra')"><span class="ni">⚙️</span><span>Infraestrutura</span></div>
+      <div class="nav-section">Estratégia</div>
+      <div class="nav-item" onclick="ir('fases')"><span class="ni">◈</span><span>Fases & Gatilhos</span></div>
+      <div class="nav-item" onclick="ir('valuation')"><span class="ni">$</span><span>Valuation</span></div>
+      <div class="nav-item" onclick="ir('crm')"><span class="ni">◫</span><span>CRM B2B</span></div>
+      <div class="nav-item" onclick="ir('receita')"><span class="ni">💰</span><span>Receitas</span></div>
+      <div class="nav-section">Conteúdo</div>
+      <div class="nav-item" onclick="ir('kelly')"><span class="ni">⚖️</span><span>Painel Kelly</span></div>
+      <div class="nav-item" onclick="ir('editor')"><span class="ni">✍️</span><span>Omni-Editor</span></div>
+      <div class="nav-item" onclick="ir('relatorios')"><span class="ni">📄</span><span>Relatórios</span></div>
+      <div class="nav-item" onclick="ir('sinais')"><span class="ni">📡</span><span>Sinais Externos</span></div>
+      <div class="nav-section">Inteligência</div>
+      <div class="nav-item" onclick="ir('gemini')"><span class="ni">🧠</span><span>GeminiComandoIA</span></div>
+      <div class="nav-item" onclick="ir('grok')"><span class="ni">🔍</span><span>Grok & Perplexity</span></div>
+      <div class="nav-item" onclick="ir('alimentacao')"><span class="ni">📥</span><span>Alimentação Manual</span></div>
+      <div class="nav-item" onclick="ir('laboratorio')"><span class="ni">🌱</span><span>Laboratório</span></div>
     </div>
-
-    <!-- PÁGINA: SAÚDE -->
-    <div id="saude" class="page">
-      <div class="page-titulo">◉ Saúde do Negócio</div>
-      <div class="page-sub">KPIs em tempo real</div>
-      <div class="kpi">
-        <div class="kpi-label">Motoristas Online</div>
-        <div class="kpi-valor" id="k-online">0</div>
-        <div class="kpi-sub">Agora</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Sementes Processadas</div>
-        <div class="kpi-valor" id="k-sementes">0</div>
-        <div class="kpi-sub">Total</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Taxa de Sucesso</div>
-        <div class="kpi-valor" id="k-taxa">0%</div>
-        <div class="kpi-sub">Última hora</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Tempo Médio</div>
-        <div class="kpi-valor" id="k-tempo">0s</div>
-        <div class="kpi-sub">Por semente</div>
-      </div>
-    </div>
-
-    <!-- NAVEGAÇÃO -->
-    <div class="tabs" style="position: sticky; bottom: 0; background: #020B18; padding: 8px 0; border-top: 1px solid #1E3A5F; margin-top: 16px;">
-      <button class="tab-btn ativo" onclick="irPara('mapa')">🗺️ Mapa</button>
-      <button class="tab-btn" onclick="irPara('laboratorio')">🌱 Lab</button>
-      <button class="tab-btn" onclick="irPara('saude')">◉ Saúde</button>
+    <div class="sidebar-footer">
+      <div style="font-size:10px;color:var(--txt3);margin-bottom:8px;" id="user-info"></div>
+      <button class="logout-btn" onclick="sair()">SAIR</button>
     </div>
   </div>
-</div>
+
+  <div class="main">
+
+    <!-- SAÚDE DO NEGÓCIO -->
+    <div class="page ativa" id="page-saude">
+      <div class="page-titulo">Saúde do Negócio</div>
+      <div class="page-sub">Visão executiva em tempo real</div>
+      <div class="grid4" id="kpis-saude">
+        <div class="kpi"><div class="kpi-label">ASSINANTES</div><div class="kpi-valor" style="color:var(--azul3)" id="k-assinantes">—</div><div class="kpi-sub">Meta: 116</div></div>
+        <div class="kpi"><div class="kpi-label">REGISTROS BANCO</div><div class="kpi-valor" style="color:var(--verde)" id="k-registros">—</div><div class="kpi-sub">IAs ativas</div></div>
+        <div class="kpi"><div class="kpi-label">IAs ATIVAS</div><div class="kpi-valor" style="color:var(--amarelo)" id="k-ias">50</div><div class="kpi-sub">de 50 planejadas</div></div>
+        <div class="kpi"><div class="kpi-label">MOTORISTAS</div><div class="kpi-valor" style="color:var(--roxo)" id="k-motoristas">—</div><div class="kpi-sub">testadores</div></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-titulo">STATUS DO SISTEMA</div>
+          <div id="status-sistema">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);">
+              <span style="font-size:12px;color:var(--txt2)">Supabase</span>
+              <span class="pill tag-verde">✓ Online</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);">
+              <span style="font-size:12px;color:var(--txt2)">GitHub Actions</span>
+              <span class="pill tag-verde">✓ Ativo</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);">
+              <span style="font-size:12px;color:var(--txt2)">IAs (cron 6h)</span>
+              <span class="pill tag-verde">✓ Rodando</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);">
+              <span style="font-size:12px;color:var(--txt2)">Painel Web</span>
+              <span class="pill tag-verde">✓ Online</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+              <span style="font-size:12px;color:var(--txt2)">App Android</span>
+              <span class="pill tag-amarelo" id="app-status">⏳ Build</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-titulo">CRESCIMENTO DO BANCO</div>
+          <div id="crescimento-banco">
+            <div style="font-size:11px;color:var(--txt3);margin-bottom:12px;">Registros por tabela (ao vivo)</div>
+            <div id="banco-rows"><div style="color:var(--txt3);font-size:11px;">Carregando...</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">MOTORISTAS CONECTADOS — TEMPO REAL</div>
+        <div id="motoristas-online">
+          <div style="color:var(--txt3);font-size:11px;text-align:center;padding:12px;">Carregando...</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="carregarMotoristasOnline()">🔄 Atualizar</button>
+      </div>
+      <div class="card">
+        <div class="card-titulo">CHECKLIST — FASE 1: VALIDAÇÃO</div>
+        <div class="grid3">
+          <div>
+            <div style="font-size:11px;color:var(--verde);margin-bottom:8px;">✅ CONCLUÍDO</div>
+            <div style="font-size:11px;color:var(--txt2);line-height:1.8;">
+              ✅ Schema Supabase v1.5<br>
+              ✅ 50 IAs rodando<br>
+              ✅ GitHub Actions<br>
+              ✅ Painel web online<br>
+              ✅ AccessibilityService<br>
+              ✅ Build passou
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--amarelo);margin-bottom:8px;">⏳ EM ANDAMENTO</div>
+            <div style="font-size:11px;color:var(--txt2);line-height:1.8;">
+              ⏳ Instalar Samsung Tab<br>
+              ⏳ Testar coleta ao vivo<br>
+              ⏳ Dados no Supabase<br>
+              ⏳ Recrutar motoristas
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;">🔜 PENDENTE</div>
+            <div style="font-size:11px;color:var(--txt2);line-height:1.8;">
+              🔜 MEI Kelly + CNPJ<br>
+              🔜 INPI — 5 índices<br>
+              🔜 Play Store<br>
+              🔜 Domínio obs.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MONITOR IAs -->
+    <div class="page" id="page-ias">
+      <div class="page-titulo">Monitor de IAs</div>
+      <div class="page-sub">50 IAs • status • última execução • dados gerados</div>
+      <div class="grid4" style="margin-bottom:16px;">
+        <div class="kpi"><div class="kpi-label">TOTAL IAs</div><div class="kpi-valor" style="color:var(--azul3)">50</div><div class="kpi-sub">planejadas</div></div>
+        <div class="kpi"><div class="kpi-label">ATIVAS</div><div class="kpi-valor" style="color:var(--verde)" id="ias-ativas">50</div><div class="kpi-sub">rodando</div></div>
+        <div class="kpi"><div class="kpi-label">COM ERRO</div><div class="kpi-valor" style="color:var(--vermelho)" id="ias-erro">3</div><div class="kpi-sub">nesta execução</div></div>
+        <div class="kpi"><div class="kpi-label">AGUARDANDO</div><div class="kpi-valor" style="color:var(--amarelo)">6</div><div class="kpi-sub">dados motoristas</div></div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">GRUPO A — 44 IAs INDEPENDENTES</div>
+        <div class="ia-grid" id="ia-grid-a"></div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">GRUPO B — 6 IAs DEPENDENTES DE MOTORISTAS</div>
+        <div class="ia-grid" id="ia-grid-b"></div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">ENVIAR COMANDO PARA IA</div>
+        <div class="grid2">
+          <div>
+            <select class="input" id="cmd-ia-select" style="margin-bottom:8px;">
+              <option value="">Selecionar IA...</option>
+              <option value="GeminiComandoIA">🧠 GeminiComandoIA</option>
+              <option value="PsicoIA">🧠 PsicoIA</option>
+              <option value="JurídicaIA">⚖️ JurídicaIA</option>
+              <option value="ArquivistaIA">🗂️ ArquivistaIA</option>
+              <option value="todas">📡 Todas as IAs</option>
+            </select>
+            <textarea class="input" id="cmd-ia-texto" placeholder="Digite o comando para a IA..." style="margin-bottom:8px;"></textarea>
+            <button class="btn btn-primary" onclick="enviarComandoIA()">Enviar Comando</button>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;">RESULTADO</div>
+            <div id="cmd-ia-resultado" style="background:var(--bg2);border-radius:8px;padding:12px;font-size:11px;color:var(--txt2);min-height:120px;">Aguardando comando...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANCO DE DADOS -->
+    <div class="page" id="page-banco">
+      <div class="page-titulo">Banco de Dados</div>
+      <div class="page-sub">Supabase • São Paulo • 44+ tabelas • leitura real</div>
+      <div class="card">
+        <div class="card-titulo">FILTROS</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <select class="input" id="banco-tabela" style="width:200px;" onchange="carregarBanco()">
+            <option value="linha_tempo_algoritmica">linha_tempo_algoritmica</option>
+            <option value="observacoes_pesquisador">observacoes_pesquisador</option>
+            <option value="fontes_enciclopedia">fontes_enciclopedia</option>
+            <option value="corridas_ofertadas">corridas_ofertadas</option>
+            <option value="studio_feed">studio_feed</option>
+            <option value="sugestoes_ia">sugestoes_ia</option>
+            <option value="dossies_camada3">dossies_camada3</option>
+            <option value="indices_publicados">indices_publicados</option>
+            <option value="producoes_editoriais">producoes_editoriais</option>
+            <option value="tarifas_comparadas">tarifas_comparadas</option>
+            <option value="anomalias">anomalias</option>
+            <option value="previsoes">previsoes</option>
+          </select>
+          <input class="input" id="banco-filtro" placeholder="Filtrar por texto..." style="width:200px;" oninput="carregarBanco()">
+          <select class="input" id="banco-limit" style="width:100px;" onchange="carregarBanco()">
+            <option value="10">10 linhas</option>
+            <option value="25">25 linhas</option>
+            <option value="50">50 linhas</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="carregarBanco()">🔄 Atualizar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div class="card-titulo" style="margin-bottom:0;" id="banco-info">Selecione uma tabela</div>
+          <span id="banco-total" style="font-size:11px;color:var(--txt3);"></span>
+        </div>
+        <div style="overflow-x:auto;" id="banco-resultado">
+          <div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Selecione uma tabela para ver os dados</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">RESUMO — TODAS AS TABELAS</div>
+        <div id="banco-resumo" class="grid4">
+          <div style="color:var(--txt3);font-size:11px;">Carregando...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFRAESTRUTURA -->
+    <div class="page" id="page-infra">
+      <div class="page-titulo">Infraestrutura</div>
+      <div class="page-sub">Stack técnico • APIs • projeção de custos</div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-titulo">STACK ATUAL — 100% GRATUITO</div>
+          <div style="font-size:12px;line-height:2;color:var(--txt2);">
+            <div style="display:flex;justify-content:space-between;"><span>Supabase (banco)</span><span class="pill tag-verde">Free</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Cloudflare Workers (painel)</span><span class="pill tag-verde">Free</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>GitHub Actions (IAs + build)</span><span class="pill tag-verde">Free</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>EAS Build (APK)</span><span class="pill tag-verde">Free</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Gemini API</span><span class="pill tag-verde">Free</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Groq API</span><span class="pill tag-verde">Free</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Mistral API</span><span class="pill tag-verde">Free</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Together API</span><span class="pill tag-verde">Free</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Perplexity Pro</span><span class="pill tag-verde">1 ano grátis</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-titulo">GATILHOS DE UPGRADE</div>
+          <div style="font-size:11px;line-height:2;color:var(--txt2);">
+            <div>9 assinantes → monitorar Gemini diariamente</div>
+            <div>30 assinantes → Gemini Flash pago</div>
+            <div>116 assinantes → <span style="color:var(--verde)">BREAKEVEN</span></div>
+            <div>480 assinantes → Gemini Pro parcial</div>
+            <div>500 assinantes → Claude Sonnet API</div>
+            <div>2000 assinantes → fine-tuning dados próprios</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">COMMITS IMPORTANTES</div>
+        <table>
+          <tr><th>Hash</th><th>Descrição</th><th>Status</th></tr>
+          <tr><td class="mono">0538e92</td><td>Commit definitivo — build validado localmente</td><td><span class="pill tag-verde">✓ Main</span></td></tr>
+          <tr><td class="mono">fbc267b</td><td>JSONObject + clear-cache + json.parse</td><td><span class="pill tag-verde">✓ Main</span></td></tr>
+          <tr><td class="mono">66af4a6</td><td>9 IAs novas adicionadas</td><td><span class="pill tag-verde">✓ Main</span></td></tr>
+          <tr><td class="mono">c397e5b</td><td>AccessibilityService Android 15</td><td><span class="pill tag-verde">✓ Main</span></td></tr>
+          <tr><td class="mono">024e37d</td><td>TelaMeusDados zerado + cache</td><td><span class="pill tag-verde">✓ Main</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- FASES -->
+    <div class="page" id="page-fases">
+      <div class="page-titulo">Fases & Gatilhos</div>
+      <div class="page-sub">Validação → Tração → Escala → Venda</div>
+      <div class="grid2">
+        <div class="card" style="border-color:var(--azul2);">
+          <div class="card-titulo" style="color:var(--azul3);">FASE 1 — VALIDAÇÃO (atual)</div>
+          <div style="font-size:12px;color:var(--txt2);line-height:1.8;">
+            ✅ App coletando dados<br>✅ IAs rodando<br>✅ Banco crescendo<br>⏳ 10+ motoristas testadores<br>⏳ 500+ corridas coletadas<br>⏳ Primeiro relatório B2B
+          </div>
+        </div>
+        <div class="card" style="opacity:.6;">
+          <div class="card-titulo">FASE 2 — TRAÇÃO</div>
+          <div style="font-size:12px;color:var(--txt2);line-height:1.8;">
+            50+ motoristas ativos<br>Play Store publicado<br>Primeiro cliente B2B<br>MEI Kelly formalizado<br>116 assinantes (breakeven)
+          </div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card" style="opacity:.4;">
+          <div class="card-titulo">FASE 3 — ESCALA</div>
+          <div style="font-size:12px;color:var(--txt2);line-height:1.8;">
+            500+ motoristas<br>3+ clientes B2B recorrentes<br>Índices reconhecidos<br>Cobertura de imprensa<br>Parceria FEMBRAPP
+          </div>
+        </div>
+        <div class="card" style="opacity:.4;">
+          <div class="card-titulo">FASE 4 — VENDA</div>
+          <div style="font-size:12px;color:var(--txt2);line-height:1.8;">
+            Exit: R$5M — R$30M<br>Compradores potenciais:<br>Seguradoras, Fintechs,<br>Institutos de pesquisa,<br>Governo
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VALUATION -->
+    <div class="page" id="page-valuation">
+      <div class="page-titulo">Valuation</div>
+      <div class="page-sub">3 cenários • calculado pelas IAs com base no crescimento</div>
+      <div class="grid3">
+        <div class="card">
+          <div class="card-titulo" style="color:var(--txt3);">CONSERVADOR</div>
+          <div class="kpi-valor" style="color:var(--txt2);font-size:28px;">R$ 5M</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:8px;line-height:1.6;">500 assinantes B2C<br>2 contratos B2B<br>Dados de 3 cidades</div>
+        </div>
+        <div class="card" style="border-color:var(--azul2);">
+          <div class="card-titulo" style="color:var(--azul3);">REALISTA</div>
+          <div class="kpi-valor" style="color:var(--azul3);font-size:28px;">R$ 15M</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:8px;line-height:1.6;">2000 assinantes B2C<br>5 contratos B2B<br>Dados nacionais<br>Reconhecimento acadêmico</div>
+        </div>
+        <div class="card">
+          <div class="card-titulo" style="color:var(--verde);">OTIMISTA</div>
+          <div class="kpi-valor" style="color:var(--verde);font-size:28px;">R$ 30M</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:8px;line-height:1.6;">5000+ assinantes<br>Contratos governo<br>Licenciamento internacional<br>Base de dados única</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">DRIVERS DE VALOR — ANÁLISE DAS IAs</div>
+        <div id="valuation-ia" style="font-size:12px;color:var(--txt2);">Carregando análise das IAs...</div>
+      </div>
+    </div>
+
+    <!-- CRM B2B -->
+    <div class="page" id="page-crm">
+      <div class="page-titulo">CRM B2B</div>
+      <div class="page-sub">Propostas • precificação IA • segmentos editáveis</div>
+      <div class="card">
+        <div class="card-titulo">SEGMENTOS</div>
+        <div class="tabs">
+          <button class="tab-btn ativo" onclick="tabCRM('seguradoras',this)">Seguradoras</button>
+          <button class="tab-btn" onclick="tabCRM('fintechs',this)">Fintechs</button>
+          <button class="tab-btn" onclick="tabCRM('governo',this)">Governo</button>
+          <button class="tab-btn" onclick="tabCRM('juridico',this)">Jurídico</button>
+          <button class="tab-btn" onclick="tabCRM('academico',this)">Acadêmico</button>
+          <button class="tab-btn" onclick="tabCRM('outros',this)">+ Outros</button>
+        </div>
+        <div class="tab-panel ativo" id="crm-seguradoras">
+          <div class="alerta alerta-info">💡 IAs calculam: R$15k–40k/mês por cliente. Valor baseado em dados de sinistros e perfil de risco dos motoristas.</div>
+          <table>
+            <tr><th>Empresa</th><th>Contato</th><th>Status</th><th>Valor</th><th>Ação</th></tr>
+            <tr><td>—</td><td>—</td><td><span class="pill tag-cinza">Prospectar</span></td><td>R$15k/mês</td><td><button class="btn btn-ghost btn-sm">Editar</button></td></tr>
+          </table>
+        </div>
+        <div class="tab-panel" id="crm-fintechs">
+          <div class="alerta alerta-info">💡 IAs calculam: R$5k–20k/mês. Valor baseado em análise de crédito e renda variável dos motoristas.</div>
+          <table><tr><th>Empresa</th><th>Contato</th><th>Status</th><th>Valor</th><th>Ação</th></tr><tr><td colspan="5" style="text-align:center;color:var(--txt3);">Nenhum lead cadastrado</td></tr></table>
+        </div>
+        <div class="tab-panel" id="crm-governo">
+          <div class="alerta alerta-info">💡 IAs calculam: R$30k–500k. Órgãos reguladores, ANPD, Ministério do Trabalho.</div>
+          <table><tr><th>Órgão</th><th>Contato</th><th>Status</th><th>Valor</th><th>Ação</th></tr><tr><td colspan="5" style="text-align:center;color:var(--txt3);">Nenhum lead cadastrado</td></tr></table>
+        </div>
+        <div class="tab-panel" id="crm-juridico">
+          <div class="alerta alerta-info">💡 Escritórios de advocacia trabalhista e sindicatos de motoristas.</div>
+          <table><tr><th>Empresa</th><th>Área</th><th>Status</th><th>Valor</th><th>Ação</th></tr><tr><td colspan="5" style="text-align:center;color:var(--txt3);">Nenhum lead cadastrado</td></tr></table>
+        </div>
+        <div class="tab-panel" id="crm-academico">
+          <div class="alerta alerta-info">💡 Universidades, institutos de pesquisa, ONGs de mobilidade.</div>
+          <table><tr><th>Instituição</th><th>Contato</th><th>Status</th><th>Valor</th><th>Ação</th></tr><tr><td colspan="5" style="text-align:center;color:var(--txt3);">Nenhum lead cadastrado</td></tr></table>
+        </div>
+        <div class="tab-panel" id="crm-outros">
+          <div style="display:flex;gap:8px;margin-bottom:16px;">
+            <input class="input" placeholder="Novo segmento..." style="width:200px;" id="novo-segmento">
+            <button class="btn btn-primary btn-sm" onclick="adicionarSegmento()">Adicionar</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">NOVA PROPOSTA</div>
+        <div class="grid2">
+          <div>
+            <input class="input" placeholder="Empresa" style="margin-bottom:8px;">
+            <input class="input" placeholder="Contato" style="margin-bottom:8px;">
+            <select class="input" style="margin-bottom:8px;">
+              <option>Proposta enviada</option>
+              <option>Proposta recebida</option>
+              <option>Em negociação</option>
+              <option>Contraproposta</option>
+              <option>Fechado</option>
+              <option>Perdido</option>
+            </select>
+          </div>
+          <div>
+            <input class="input" placeholder="Valor (R$)" style="margin-bottom:8px;">
+            <textarea class="input" placeholder="Observações..." style="margin-bottom:8px;"></textarea>
+            <button class="btn btn-primary">Salvar Proposta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECEITAS -->
+    <div class="page" id="page-receita">
+      <div class="page-titulo">Receitas & Despesas</div>
+      <div class="page-sub">Entradas + despesas editáveis • margem calculada pelas IAs</div>
+      <div class="grid3">
+        <div class="kpi"><div class="kpi-label">RECEITA MENSAL</div><div class="kpi-valor" style="color:var(--verde)" id="receita-total">R$ 0</div><div class="kpi-sub">B2C + B2B</div></div>
+        <div class="kpi"><div class="kpi-label">DESPESAS</div><div class="kpi-valor" style="color:var(--vermelho)" id="despesa-total">R$ 0</div><div class="kpi-sub">infraestrutura + outros</div></div>
+        <div class="kpi"><div class="kpi-label">MARGEM</div><div class="kpi-valor" style="color:var(--amarelo)" id="margem-total">R$ 0</div><div class="kpi-sub">líquido</div></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-titulo">ENTRADAS</div>
+          <table id="tabela-entradas">
+            <tr><th>Fonte</th><th>Valor/mês</th><th>Ação</th></tr>
+            <tr><td>Assinaturas B2C (R$2,99)</td><td id="renda-b2c">R$ 0</td><td><button class="btn btn-ghost btn-sm" onclick="editarEntrada('b2c')">✏️</button></td></tr>
+            <tr><td>Contratos B2B</td><td id="renda-b2b">R$ 0</td><td><button class="btn btn-ghost btn-sm" onclick="editarEntrada('b2b')">✏️</button></td></tr>
+          </table>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="adicionarEntrada()">+ Adicionar entrada</button>
+        </div>
+        <div class="card">
+          <div class="card-titulo">DESPESAS PREVISTAS</div>
+          <table id="tabela-despesas">
+            <tr><th>Item</th><th>Valor/mês</th><th>Status</th><th>Ação</th></tr>
+            <tr><td>Supabase Pro (quando necessário)</td><td>US$25</td><td><span class="pill tag-cinza">Futuro</span></td><td><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+            <tr><td>MEI Kelly</td><td>R$70</td><td><span class="pill tag-amarelo">Pendente</span></td><td><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+            <tr><td>Google Play Console</td><td>US$25 (único)</td><td><span class="pill tag-amarelo">Pendente</span></td><td><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+            <tr><td>Domínio (.com.br)</td><td>R$40/ano</td><td><span class="pill tag-amarelo">Pendente</span></td><td><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+            <tr><td>INPI — 5 índices</td><td>R$300 (único)</td><td><span class="pill tag-amarelo">Pendente</span></td><td><button class="btn btn-ghost btn-sm">✏️</button></td></tr>
+          </table>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="adicionarDespesa()">+ Adicionar despesa</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAINEL KELLY -->
+    <div class="page" id="page-kelly">
+      <div class="page-titulo">Painel Kelly</div>
+      <div class="page-sub">Relatos • laudos • interação com IAs • CRP/MG 04/59.263</div>
+      <div class="alerta alerta-aviso">⚠️ Laudos psicossociais exigem assinatura CRP da Kelly. NUNCA automático.</div>
+      <div class="tabs">
+        <button class="tab-btn ativo" onclick="tabKelly('relatos',this)">Relatos</button>
+        <button class="tab-btn" onclick="tabKelly('laudos',this)">Laudos</button>
+        <button class="tab-btn" onclick="tabKelly('questionarios',this)">Questionários</button>
+        <button class="tab-btn" onclick="tabKelly('fila',this)">Fila de Aprovação</button>
+      </div>
+      <div class="tab-panel ativo" id="kelly-relatos">
+        <div id="kelly-relatos-lista">
+          <div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Carregando relatos dos motoristas...</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="carregarRelatos()">🔄 Atualizar</button>
+      </div>
+      <div class="tab-panel" id="kelly-laudos">
+        <div class="alerta alerta-info">💡 PsicoIA + SentimentIA geram rascunho → Kelly revisa → assina com CRP</div>
+        <div id="kelly-laudos-lista">
+          <div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Nenhum laudo pendente</div>
+        </div>
+      </div>
+      <div class="tab-panel" id="kelly-questionarios">
+        <div class="alerta alerta-info">💡 PsicoIA gera questionário mensal → Kelly ajusta → dispara dia 1 → expira dia 15</div>
+        <div class="card">
+          <div class="card-titulo">PRÓXIMO QUESTIONÁRIO</div>
+          <div style="font-size:12px;color:var(--txt2);">Aguardando geração pela PsicoIA no próximo ciclo.</div>
+        </div>
+      </div>
+      <div class="tab-panel" id="kelly-fila">
+        <div id="kelly-fila-lista">
+          <div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Nenhum item na fila</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OMNI-EDITOR -->
+    <div class="page" id="page-editor">
+      <div class="page-titulo">Omni-Editor</div>
+      <div class="page-sub">Modo Journal • camadas de risco • advogado • fluxo editorial</div>
+      <div class="tabs">
+        <button class="tab-btn ativo" onclick="tabEditor('journal',this)">📔 Journal</button>
+        <button class="tab-btn" onclick="tabEditor('novo',this)">✍️ Nova entrada</button>
+        <button class="tab-btn" onclick="tabEditor('fluxo',this)">🔄 Fluxo</button>
+      </div>
+      <div class="tab-panel ativo" id="editor-journal">
+        <div class="alerta alerta-info">
+          Camadas de risco: 
+          <span style="color:var(--verde);">🟢 Camada 1 — Publicável</span> | 
+          <span style="color:var(--amarelo);">🟡 Camada 2 — Interno</span> | 
+          <span style="color:var(--vermelho);">🔴 Camada 3 — Sensível</span> | 
+          <span style="color:var(--txt3);">⚫ Camada 4 — Confidencial</span>
+        </div>
+        <div id="journal-lista">
+          <div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Carregando entradas do journal...</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="carregarJournal()">🔄 Atualizar</button>
+      </div>
+      <div class="tab-panel" id="editor-novo">
+        <div class="card">
+          <div class="card-titulo">NOVA ENTRADA</div>
+          <input class="input" id="ed-titulo" placeholder="Título..." style="margin-bottom:8px;">
+          <textarea class="input" id="ed-corpo" placeholder="Conteúdo..." style="min-height:150px;margin-bottom:8px;"></textarea>
+          <div class="grid2" style="margin-bottom:8px;">
+            <select class="input" id="ed-camada">
+              <option value="1">🟢 Camada 1 — Publicável</option>
+              <option value="2">🟡 Camada 2 — Uso Interno</option>
+              <option value="3">🔴 Camada 3 — Sensível</option>
+              <option value="4">⚫ Camada 4 — Confidencial</option>
+            </select>
+            <input class="input" id="ed-advogado" placeholder="Advogado recomendado (área)...">
+          </div>
+          <div class="row-btns">
+            <button class="btn btn-primary" onclick="salvarEntrada()">Salvar</button>
+            <button class="btn" style="background:rgba(16,185,129,.15);border-color:var(--verde);color:var(--verde);" onclick="enviarStudio()">→ Studio</button>
+            <button class="btn" style="background:rgba(245,158,11,.15);border-color:var(--amarelo);color:var(--amarelo);" onclick="marcarEmbargo()">🔒 Embargo</button>
+          </div>
+        </div>
+      </div>
+      <div class="tab-panel" id="editor-fluxo">
+        <div class="card">
+          <div class="card-titulo">FLUXO EDITORIAL</div>
+          <div style="font-size:12px;color:var(--txt2);line-height:2;">
+            1. IAs geram conteúdo → banco<br>
+            2. Omni-Editor exibe para revisão<br>
+            3. Kelly define camada de risco<br>
+            4. Camada 1 → Studio Feed (automaticamente)<br>
+            5. Camada 2 → Índices B2B<br>
+            6. Camada 3 → Dossiê FEMBRAPP / advogados<br>
+            7. Camada 4 → Banco interno confidencial<br>
+            8. Conteúdo com valor → embargo → aprovação → publicação com preço
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELATÓRIOS -->
+    <div class="page" id="page-relatorios">
+      <div class="page-titulo">Relatórios</div>
+      <div class="page-sub">Leitura • interação com IAs • versões • ajuda humana</div>
+      <div class="grid2" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="card-titulo">FILTROS</div>
+          <select class="input" style="margin-bottom:8px;" id="rel-tipo">
+            <option value="">Todos os tipos</option>
+            <option value="indice">Índices</option>
+            <option value="b2b">B2B</option>
+            <option value="juridico">Jurídico</option>
+            <option value="editorial">Editorial</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="carregarRelatorios()">🔄 Carregar</button>
+        </div>
+        <div class="card">
+          <div class="card-titulo">RESUMO</div>
+          <div id="rel-resumo" style="font-size:12px;color:var(--txt2);">Carregando...</div>
+        </div>
+      </div>
+      <div id="relatorios-lista">
+        <div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Selecione filtros e carregue os relatórios</div>
+      </div>
+    </div>
+
+    <!-- SINAIS EXTERNOS -->
+    <div class="page" id="page-sinais">
+      <div class="page-titulo">Sinais Externos</div>
+      <div class="page-sub">Radar regulatório • mídia • academia • plataformas • você sugere</div>
+      <div class="alerta alerta-info">📡 ScoutIA, LegisIA, GarImpeiroIA e ContextoIA monitoram continuamente. Você pode adicionar sinais manualmente.</div>
+      <div class="tabs">
+        <button class="tab-btn ativo" onclick="tabSinais('regulatorio',this)">⚖️ Regulatório</button>
+        <button class="tab-btn" onclick="tabSinais('midia',this)">📰 Mídia</button>
+        <button class="tab-btn" onclick="tabSinais('academia',this)">🎓 Academia</button>
+        <button class="tab-btn" onclick="tabSinais('plataformas',this)">📱 Plataformas</button>
+        <button class="tab-btn" onclick="tabSinais('manual',this)">➕ Adicionar Sinal</button>
+      </div>
+      <div class="tab-panel ativo" id="sinais-regulatorio">
+        <div id="sinais-reg-lista"><div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Carregando sinais regulatórios...</div></div>
+        <button class="btn btn-ghost btn-sm" onclick="carregarSinais('regulatorio')">🔄 Atualizar</button>
+      </div>
+      <div class="tab-panel" id="sinais-midia">
+        <div id="sinais-mid-lista"><div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Carregando cobertura de mídia...</div></div>
+      </div>
+      <div class="tab-panel" id="sinais-academia">
+        <div id="sinais-aca-lista"><div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Carregando pesquisas acadêmicas...</div></div>
+      </div>
+      <div class="tab-panel" id="sinais-plataformas">
+        <div id="sinais-pla-lista"><div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Carregando sinais das plataformas...</div></div>
+      </div>
+      <div class="tab-panel" id="sinais-manual">
+        <div class="card">
+          <div class="card-titulo">ADICIONAR SINAL MANUALMENTE</div>
+          <input class="input" id="sinal-titulo" placeholder="Título do sinal..." style="margin-bottom:8px;">
+          <textarea class="input" id="sinal-desc" placeholder="Descrição e contexto..." style="margin-bottom:8px;"></textarea>
+          <div class="grid2" style="margin-bottom:8px;">
+            <select class="input" id="sinal-tipo">
+              <option value="regulatorio">⚖️ Regulatório</option>
+              <option value="midia">📰 Mídia</option>
+              <option value="academia">🎓 Academia</option>
+              <option value="plataforma">📱 Plataforma</option>
+            </select>
+            <select class="input" id="sinal-intencao">
+              <option value="monitorar">👁️ Monitorar</option>
+              <option value="investigar">🔍 Investigar</option>
+              <option value="responder">💬 Responder</option>
+              <option value="urgente">🚨 Urgente</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="salvarSinal()">Salvar Sinal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GEMINI COMANDO IA -->
+    <div class="page" id="page-gemini">
+      <div class="page-titulo">GeminiComandoIA</div>
+      <div class="page-sub">Cérebro estratégico • sugestões a cada 12h • você valida</div>
+      <div class="alerta alerta-info">🧠 A GeminiComandoIA analisa o banco e gera 3 sugestões por ciclo: pesquisa + studio + comercial. Você copia o prompt e cola no Claude app para validar.</div>
+      <div class="grid3" style="margin-bottom:16px;">
+        <div class="kpi"><div class="kpi-label">SUGESTÕES PENDENTES</div><div class="kpi-valor" style="color:var(--roxo)" id="gem-pendentes">—</div></div>
+        <div class="kpi"><div class="kpi-label">EXECUTADAS</div><div class="kpi-valor" style="color:var(--verde)" id="gem-executadas">—</div></div>
+        <div class="kpi"><div class="kpi-label">ÚLTIMO CICLO</div><div class="kpi-valor" style="color:var(--azul3);font-size:14px;" id="gem-ultimo">—</div></div>
+      </div>
+      <div id="gemini-sugestoes">
+        <div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Carregando sugestões...</div>
+      </div>
+      <button class="btn btn-primary" onclick="carregarGeminiSugestoes()">🔄 Atualizar sugestões</button>
+      <div class="card" style="margin-top:16px;">
+        <div class="card-titulo">RESPOSTA DO CLAUDE — colar aqui após validar</div>
+        <select class="input" id="gem-sel-id" style="margin-bottom:8px;"><option value="">Selecionar sugestão...</option></select>
+        <textarea class="input" id="gem-resposta" placeholder="Cole a resposta do Claude aqui..." style="margin-bottom:8px;"></textarea>
+        <button class="btn btn-primary" onclick="salvarRespostaGemini()">Salvar & Executar</button>
+      </div>
+    </div>
+
+    <!-- GROK & PERPLEXITY -->
+    <div class="page" id="page-grok">
+      <div class="page-titulo">Grok & Perplexity</div>
+      <div class="page-sub">Pesquisa manual • prompts gerados automaticamente • copiar e colar</div>
+      <div class="alerta alerta-info">🔍 GrokMonitorIA e PerplexityMonitorIA geram prompts otimizados. Você copia, pesquisa e traz o resultado de volta.</div>
+      <div class="grid2">
+        <div class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">𝕏</div>
+            <div><div class="tool-nome">Grok (X/Twitter)</div><div class="tool-desc">Tendências em tempo real • motoristas • algoritmos</div></div>
+          </div>
+          <div id="grok-prompt-atual" style="background:var(--bg);border-radius:8px;padding:12px;font-size:11px;color:var(--txt2);margin-bottom:8px;min-height:80px;">Carregando prompt...</div>
+          <div class="row-btns">
+            <button class="btn btn-primary btn-sm" onclick="copiarPrompt('grok')">📋 Copiar Prompt</button>
+            <a href="https://grok.x.ai" target="_blank" class="btn btn-ghost btn-sm">Abrir Grok →</a>
+          </div>
+          <div style="margin-top:12px;">
+            <div style="font-size:10px;color:var(--txt3);margin-bottom:4px;">RESULTADO DO GROK</div>
+            <textarea class="input" id="grok-resultado" placeholder="Cole o resultado do Grok aqui..." style="min-height:80px;margin-bottom:8px;"></textarea>
+            <button class="btn btn-verde btn-sm" onclick="salvarResultado('grok')">Salvar resultado</button>
+          </div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">🔍</div>
+            <div><div class="tool-nome">Perplexity</div><div class="tool-desc">Pesquisa web com fontes • acadêmico • legislativo</div></div>
+          </div>
+          <div id="perplexity-prompt-atual" style="background:var(--bg);border-radius:8px;padding:12px;font-size:11px;color:var(--txt2);margin-bottom:8px;min-height:80px;">Carregando prompt...</div>
+          <div class="row-btns">
+            <button class="btn btn-primary btn-sm" onclick="copiarPrompt('perplexity')">📋 Copiar Prompt</button>
+            <a href="https://perplexity.ai" target="_blank" class="btn btn-ghost btn-sm">Abrir Perplexity →</a>
+          </div>
+          <div style="margin-top:12px;">
+            <div style="font-size:10px;color:var(--txt3);margin-bottom:4px;">RESULTADO DO PERPLEXITY</div>
+            <textarea class="input" id="perplexity-resultado" placeholder="Cole o resultado aqui..." style="min-height:80px;margin-bottom:8px;"></textarea>
+            <button class="btn btn-verde btn-sm" onclick="salvarResultado('perplexity')">Salvar resultado</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALIMENTAÇÃO MANUAL -->
+    <div class="page" id="page-alimentacao">
+      <div class="page-titulo">Alimentação Manual</div>
+      <div class="page-sub">Links • documentos • informes • qualquer coisa para as IAs estudarem</div>
+      <div class="alerta alerta-info">📥 Envie qualquer conteúdo — as IAs vão estudar, analisar e incorporar ao banco de conhecimento automaticamente no próximo ciclo.</div>
+      <div class="card">
+        <div class="card-titulo">NOVO CONTEÚDO</div>
+        <div class="tabs">
+          <button class="tab-btn ativo" onclick="tabFeed('link',this)">🔗 Link</button>
+          <button class="tab-btn" onclick="tabFeed('texto',this)">📝 Texto</button>
+          <button class="tab-btn" onclick="tabFeed('documento',this)">📄 Documento</button>
+          <button class="tab-btn" onclick="tabFeed('informe',this)">📢 Informe</button>
+        </div>
+        <div class="tab-panel ativo" id="feed-link">
+          <input class="input" id="feed-url" placeholder="Cole a URL aqui..." style="margin-bottom:8px;">
+          <input class="input" id="feed-url-desc" placeholder="Descrição ou contexto (opcional)..." style="margin-bottom:8px;">
+          <select class="input" id="feed-url-ia" style="margin-bottom:8px;">
+            <option value="">IAs decidem automaticamente</option>
+            <option value="ArquivistaIA">ArquivistaIA — histórico</option>
+            <option value="LegisIA">LegisIA — legislativo</option>
+            <option value="AcadêmicoIA">AcadêmicoIA — pesquisa</option>
+            <option value="GarImpeiroIA">GarImpeiroIA — redes sociais</option>
+          </select>
+          <button class="btn btn-primary" onclick="enviarAlimentacao('link')">Enviar para IAs</button>
+        </div>
+        <div class="tab-panel" id="feed-texto">
+          <textarea class="input" id="feed-texto-body" placeholder="Cole ou digite qualquer texto para as IAs analisarem..." style="min-height:150px;margin-bottom:8px;"></textarea>
+          <button class="btn btn-primary" onclick="enviarAlimentacao('texto')">Enviar para IAs</button>
+        </div>
+        <div class="tab-panel" id="feed-documento">
+          <div class="alerta alerta-aviso">Upload de arquivos em desenvolvimento — por enquanto cole o conteúdo como texto.</div>
+        </div>
+        <div class="tab-panel" id="feed-informe">
+          <input class="input" id="feed-inf-titulo" placeholder="Título do informe..." style="margin-bottom:8px;">
+          <textarea class="input" id="feed-inf-body" placeholder="Conteúdo do informe..." style="min-height:100px;margin-bottom:8px;"></textarea>
+          <select class="input" id="feed-inf-urgencia" style="margin-bottom:8px;">
+            <option value="normal">Normal</option>
+            <option value="urgente">🚨 Urgente</option>
+          </select>
+          <button class="btn btn-primary" onclick="enviarAlimentacao('informe')">Enviar para IAs</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">HISTÓRICO DE ALIMENTAÇÕES</div>
+        <div id="alimentacao-historico">
+          <div style="color:var(--txt3);font-size:11px;text-align:center;padding:16px;">Nenhum conteúdo enviado ainda</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LABORATÓRIO -->
+    <div class="page" id="page-laboratorio">
+      <div class="page-titulo">Laboratório de Conhecimento</div>
+      <div class="page-sub">Semente → Germina → Amadurece → Colheita → Reaproveitamento</div>
+      <div class="alerta alerta-info">🌱 Nada morre aqui. Todo conhecimento é aproveitado, enriquecido e publicado no momento certo.</div>
+      <div class="grid4" style="margin-bottom:16px;">
+        <div class="kpi"><div class="kpi-label">SEMENTES</div><div class="kpi-valor" style="color:var(--txt3)" id="lab-semente">—</div><div class="kpi-sub">&lt;70% confiança</div></div>
+        <div class="kpi"><div class="kpi-label">GERMINANDO</div><div class="kpi-valor" style="color:var(--amarelo)" id="lab-germinando">—</div><div class="kpi-sub">70-89%</div></div>
+        <div class="kpi"><div class="kpi-label">AMADURECENDO</div><div class="kpi-valor" style="color:var(--azul3)" id="lab-amadurecendo">—</div><div class="kpi-sub">90%+</div></div>
+        <div class="kpi"><div class="kpi-label">COLHIDOS</div><div class="kpi-valor" style="color:var(--verde)" id="lab-colhido">—</div><div class="kpi-sub">publicados</div></div>
+      </div>
+      <div class="lab-stage" id="lab-board">
+        <div class="lab-col">
+          <div class="lab-col-titulo" style="color:var(--txt3);">🌱 SEMENTES</div>
+          <div id="lab-col-semente"><div style="font-size:11px;color:var(--txt3);">Carregando...</div></div>
+        </div>
+        <div class="lab-col">
+          <div class="lab-col-titulo" style="color:var(--amarelo);">🌿 GERMINANDO</div>
+          <div id="lab-col-germinando"><div style="font-size:11px;color:var(--txt3);">Carregando...</div></div>
+        </div>
+        <div class="lab-col">
+          <div class="lab-col-titulo" style="color:var(--azul3);">🌳 AMADURECENDO</div>
+          <div id="lab-col-amadurecendo"><div style="font-size:11px;color:var(--txt3);">Carregando...</div></div>
+        </div>
+        <div class="lab-col">
+          <div class="lab-col-titulo" style="color:var(--verde);">🌾 COLHEITA</div>
+          <div id="lab-col-colhido"><div style="font-size:11px;color:var(--txt3);">Carregando...</div></div>
+        </div>
+        <div class="lab-col">
+          <div class="lab-col-titulo" style="color:var(--roxo);">♻️ REAPROVEITAMENTO</div>
+          <div id="lab-col-reaproveitado"><div style="font-size:11px;color:var(--txt3);">Carregando...</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- fim main -->
+</div><!-- fim app -->
 
 <script>
-const SUPABASE_URL = 'https://ocjgtbeswwprayuexwrf.supabase.com';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jamd0YmVzd3dwcmF5dWV4d3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTExNDQ5NzcsImV4cCI6MjAyNjc0NDk3N30.7Vlpv59ZPtU4Fkcvsmxigg_-QXO63yX';
+// ═══════════════════════════════════════
+// CONFIG SUPABASE
+// ═══════════════════════════════════════
+const SB_URL = 'https://ocjgtbeswwprayuexwrf.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jamd0YmVzd3dwcmF5dWV4d3JmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzAyNzE0OCwiZXhwIjoyMDg4NjAzMTQ4fQ.MpFPRgaBkYhXLZ8bV81VGa_UZIEhk2r2wSr8H7O5sNw';
+const HDRS = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
 
-let usuarioLogado = null;
-let motoristasCache = {};
-let sementesCache = {};
+async function sb(tabela, params=''){
+  try{
+    const r = await fetch(`${SB_URL}/rest/v1/${tabela}?${params}`,{headers:HDRS});
+    if(!r.ok) return [];
+    return await r.json();
+  }catch(e){return [];}
+}
 
-function fazerLogin() {
-  const usuario = document.getElementById('lu').value;
-  const senha = document.getElementById('lp').value;
-  
-  if (!usuario || !senha) {
-    document.getElementById('login-erro').textContent = 'Preencha usuário e senha';
-    return;
-  }
-  
-  if (usuario === 'admin' && senha === 'Master35681') {
-    usuarioLogado = usuario;
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    carregarDados();
+async function sbCount(tabela){
+  try{
+    const r = await fetch(`${SB_URL}/rest/v1/${tabela}?select=id`,{headers:{...HDRS,'Prefer':'count=exact','Range':'0-0'}});
+    return parseInt(r.headers.get('content-range')?.split('/')[1]||'0');
+  }catch(e){return 0;}
+}
+
+// ═══════════════════════════════════════
+// AUTENTICAÇÃO
+// ═══════════════════════════════════════
+const USERS = {'kelly':'obs@kelly2026','frederico':'obs@fred2026','admin':'observatorio@2026'};
+let usuarioAtual = '';
+
+function entrar(){
+  const u=document.getElementById('lu').value.trim().toLowerCase();
+  const p=document.getElementById('lp').value.trim();
+  if(USERS[u]===p){
+    usuarioAtual=u;
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('user-info').textContent=u.toUpperCase();
+    inicializar();
   } else {
-    document.getElementById('login-erro').textContent = 'Usuário ou senha inválidos';
+    document.getElementById('lerro').textContent='Usuário ou senha incorretos';
   }
 }
 
-function fazerLogout() {
-  usuarioLogado = null;
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login').style.display = 'flex';
-  document.getElementById('lu').value = '';
-  document.getElementById('lp').value = '';
+function sair(){
+  document.getElementById('login').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('lu').value='';
+  document.getElementById('lp').value='';
 }
 
-function irPara(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('ativa'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('ativo'));
-  document.getElementById(id).classList.add('ativa');
-  event.target.classList.add('ativo');
+// ═══════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════
+function ir(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('ativa'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('ativo'));
+  document.getElementById('page-'+id)?.classList.add('ativa');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')?.includes("'"+id+"'")){n.classList.add('ativo');}
+  });
+  // Carregar dados da página
+  if(id==='saude') carregarSaude();
+  if(id==='ias') carregarIAs();
+  if(id==='banco') carregarBancoResumo();
+  if(id==='gemini') carregarGeminiSugestoes();
+  if(id==='grok') carregarGrokPrompts();
+  if(id==='laboratorio') carregarLaboratorio();
+  if(id==='relatorios') carregarRelatorios();
+  if(id==='kelly') carregarRelatos();
+  if(id==='sinais') carregarSinais('regulatorio');
 }
 
-async function carregarDados() {
-  try {
-    // Simular dados (sem Realtime por enquanto)
-    motoristasCache = {
-      '1': { id: '1', cidade_estado: 'São Paulo/SP', plataformas: ['Uber', '99'], is_online: true, dispositivo_modelo: 'Samsung A12', android_versao: '11', app_versao: '2.1.0' },
-      '2': { id: '2', cidade_estado: 'Rio de Janeiro/RJ', plataformas: ['Uber'], is_online: true, dispositivo_modelo: 'Xiaomi Redmi', android_versao: '12', app_versao: '2.1.0' },
-      '3': { id: '3', cidade_estado: 'Belo Horizonte/MG', plataformas: ['99'], is_online: false, dispositivo_modelo: 'Motorola G8', android_versao: '10', app_versao: '2.0.5' }
-    };
-    
-    sementesCache = {
-      '1': { id: '1', conteudo_bruto: 'Relato sobre tarifa abusiva na plataforma Uber...', estado_metabolico: 'GERMINANDO', progresso: 40 },
-      '2': { id: '2', conteudo_bruto: 'Problema de segurança com motorista...', estado_metabolico: 'AMADURECENDO', progresso: 70 },
-      '3': { id: '3', conteudo_bruto: 'Dificuldade técnica no app...', estado_metabolico: 'COLHEITA', progresso: 100 }
-    };
-    
-    atualizarMapaCalor();
-    atualizarLaboratorio();
-    atualizarKPIs();
-  } catch (e) {
-    console.error('Erro ao carregar dados:', e);
-  }
+// ═══════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════
+function tab(grupo, id, el){
+  document.querySelectorAll('[id^="'+grupo+'-"]').forEach(p=>p.classList.remove('ativo'));
+  el.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('ativo'));
+  document.getElementById(grupo+'-'+id)?.classList.add('ativo');
+  el.classList.add('ativo');
 }
+function tabCRM(id,el){tab('crm',id,el);}
+function tabKelly(id,el){tab('kelly',id,el);}
+function tabEditor(id,el){tab('editor',id,el);}
+function tabSinais(id,el){tab('sinais',id,el);}
+function tabFeed(id,el){tab('feed',id,el);}
 
-function atualizarMapaCalor() {
-  const lista = document.getElementById('mapa-lista');
-  const motoristas = Object.values(motoristasCache);
+// ═══════════════════════════════════════
+// SAÚDE DO NEGÓCIO
+// ═══════════════════════════════════════
+async function carregarSaude(){
+  // KPIs
+  const tabelas = [
+    {id:'k-registros', tabelas:['linha_tempo_algoritmica','observacoes_pesquisador','fontes_enciclopedia','indices_publicados','producoes_editoriais']},
+  ];
   
-  if (motoristas.length === 0) {
-    lista.innerHTML = '<div class="empty-state">Nenhum motorista online</div>';
+  // Motoristas
+  const motoristas = await sbCount('motoristas');
+  document.getElementById('k-motoristas').textContent = motoristas || '0';
+  
+  // Total registros (soma das principais tabelas)
+  let total = 0;
+  const principais = ['linha_tempo_algoritmica','observacoes_pesquisador','fontes_enciclopedia','corridas_ofertadas','studio_feed'];
+  for(const t of principais){
+    total += await sbCount(t);
+  }
+  document.getElementById('k-registros').textContent = total.toLocaleString('pt-BR');
+  carregarMotoristasOnline();
+  
+  // Banco rows visual
+  const tabelasVis = ['linha_tempo_algoritmica','observacoes_pesquisador','fontes_enciclopedia','studio_feed','corridas_ofertadas'];
+  let html = '';
+  for(const t of tabelasVis){
+    const c = await sbCount(t);
+    html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--borda);">
+      <span style="font-size:11px;color:var(--txt2)">${t}</span>
+      <span style="font-size:12px;font-weight:700;color:var(--azul3)">${c.toLocaleString('pt-BR')}</span>
+    </div>`;
+  }
+  document.getElementById('banco-rows').innerHTML = html;
+}
+
+// ═══════════════════════════════════════
+// MONITOR IAs
+// ═══════════════════════════════════════
+const IAS_A = [
+  {nome:'SeedIA',motor:'Python',status:'ok'},
+  {nome:'RegionalIA',motor:'G.Search',status:'ok'},
+  {nome:'ArquivistaIA',motor:'Gemini',status:'aviso'},
+  {nome:'ScoutIA',motor:'G.Search',status:'ok'},
+  {nome:'EventoIA',motor:'Groq',status:'ok'},
+  {nome:'ArqueólogoIA',motor:'G.Search',status:'ok'},
+  {nome:'EnciclopédiaIA',motor:'Gemini',status:'ok'},
+  {nome:'FontesFrederico',motor:'Python',status:'ok'},
+  {nome:'GarImpeiroIA',motor:'G.Search',status:'ok'},
+  {nome:'ContextoIA',motor:'G.Search',status:'ok'},
+  {nome:'SincroniaIA',motor:'G.Search',status:'ok'},
+  {nome:'TelegramIA',motor:'Groq',status:'aviso'},
+  {nome:'TarifaIA',motor:'Groq',status:'ok'},
+  {nome:'TechIA',motor:'Groq',status:'ok'},
+  {nome:'EstatísticaIA',motor:'Groq',status:'ok'},
+  {nome:'PsicoIA',motor:'Gemini',status:'ok'},
+  {nome:'JurídicaIA',motor:'Cohere',status:'ok'},
+  {nome:'AcadêmicoIA',motor:'G.Search',status:'ok'},
+  {nome:'FinanceiroIA',motor:'G.Search',status:'ok'},
+  {nome:'LegislativaIA',motor:'G.Search',status:'ok'},
+  {nome:'FuturoIA',motor:'Gemini',status:'ok'},
+  {nome:'CruzamentoIA',motor:'Gemini',status:'ok'},
+  {nome:'PredicãoIA',motor:'Gemini',status:'ok'},
+  {nome:'ComandoIA',motor:'Gemini',status:'ok'},
+  {nome:'FrotaIA',motor:'G.Search',status:'ok'},
+  {nome:'TendênciaIA',motor:'G.Search',status:'ok'},
+  {nome:'LaboratórioIA',motor:'Gemini',status:'ok'},
+  {nome:'AuditoriaIA',motor:'Groq',status:'ok'},
+  {nome:'EnriquecimentoIA',motor:'Gemini',status:'ok'},
+  {nome:'ObservatórioIA',motor:'Gemini',status:'ok'},
+  {nome:'JornalismoIA',motor:'Groq',status:'ok'},
+  {nome:'MídiaIA',motor:'Groq',status:'ok'},
+  {nome:'MercadoIA',motor:'G.Search',status:'ok'},
+  {nome:'BackupIA',motor:'Python',status:'ok'},
+  {nome:'DistribuidorIA',motor:'Python',status:'ok'},
+  // Novas
+  {nome:'AlertaIA',motor:'Python',status:'ok'},
+  {nome:'CorrelacaoIA',motor:'Gemini',status:'ok'},
+  {nome:'CompetidorIA',motor:'G.Search',status:'ok'},
+  {nome:'LegisIA',motor:'G.Search',status:'ok'},
+  {nome:'PrecificacaoIA',motor:'Gemini',status:'ok'},
+  {nome:'TendênciaStudioIA',motor:'Gemini',status:'ok'},
+  {nome:'RecorrenciaIA',motor:'Gemini',status:'ok'},
+  {nome:'GeminiComandoIA',motor:'Gemini',status:'ok'},
+  {nome:'GrokMonitorIA',motor:'Gemini',status:'ok'},
+];
+
+const IAS_B = [
+  {nome:'ExtractorIA',motor:'Groq',status:'aguardando'},
+  {nome:'CleanerIA',motor:'Groq',status:'aguardando'},
+  {nome:'PatternIA',motor:'Gemini',status:'aguardando'},
+  {nome:'SentimentIA',motor:'Groq',status:'aguardando'},
+  {nome:'RelatorIA',motor:'Gemini',status:'aguardando'},
+  {nome:'FusãoIA',motor:'Gemini',status:'aguardando'},
+];
+
+function corIA(s){return s==='ok'?'var(--verde)':s==='aviso'?'var(--amarelo)':s==='erro'?'var(--vermelho)':'var(--txt3)';}
+function badgeIA(s){
+  if(s==='ok') return '<span class="pill tag-verde">✓ OK</span>';
+  if(s==='aviso') return '<span class="pill tag-amarelo">⚠ Aviso</span>';
+  if(s==='erro') return '<span class="pill tag-vermelho">✗ Erro</span>';
+  return '<span class="pill tag-cinza">⏳ Aguarda</span>';
+}
+
+function carregarIAs(){
+  const ga = document.getElementById('ia-grid-a');
+  ga.innerHTML = IAS_A.map(ia=>`
+    <div class="ia-item" style="border-left-color:${corIA(ia.status)}">
+      <div class="ia-nome">${ia.nome}</div>
+      <div class="ia-motor">${ia.motor}</div>
+      <div>${badgeIA(ia.status)}</div>
+    </div>
+  `).join('');
+  
+  const gb = document.getElementById('ia-grid-b');
+  gb.innerHTML = IAS_B.map(ia=>`
+    <div class="ia-item" style="border-left-color:${corIA(ia.status)}">
+      <div class="ia-nome">${ia.nome}</div>
+      <div class="ia-motor">${ia.motor}</div>
+      <div>${badgeIA(ia.status)}</div>
+    </div>
+  `).join('');
+}
+
+function enviarComandoIA(){
+  const ia = document.getElementById('cmd-ia-select').value;
+  const cmd = document.getElementById('cmd-ia-texto').value;
+  if(!ia || !cmd) return;
+  document.getElementById('cmd-ia-resultado').innerHTML = 
+    `<div style="color:var(--amarelo)">⏳ Comando salvo para ${ia}. Será executado no próximo ciclo das IAs (cron 6h).</div>`;
+}
+
+// ═══════════════════════════════════════
+// BANCO DE DADOS
+// ═══════════════════════════════════════
+async function carregarBanco(){
+  const tabela = document.getElementById('banco-tabela').value;
+  const filtro = document.getElementById('banco-filtro').value;
+  const limit = document.getElementById('banco-limit').value;
+  
+  document.getElementById('banco-info').textContent = tabela;
+  document.getElementById('banco-resultado').innerHTML = '<div style="color:var(--txt3);font-size:11px;padding:12px;">Carregando...</div>';
+  
+  let params = `select=*&limit=${limit}&order=created_at.desc`;
+  
+  const dados = await sb(tabela, params);
+  const total = await sbCount(tabela);
+  
+  document.getElementById('banco-total').textContent = `${total.toLocaleString('pt-BR')} registros total`;
+  
+  if(!dados.length){
+    document.getElementById('banco-resultado').innerHTML = '<div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Nenhum registro encontrado</div>';
     return;
   }
   
-  let html = motoristas.map(m => {
-    const status = m.is_online ? 'online' : 'offline';
-    const icon = m.is_online ? '🟢' : '⚫';
-    return `
-      <div class="motorista-item ${status}">
-        <div class="motorista-nome">${icon} ${m.cidade_estado}</div>
-        <div class="motorista-info">
-          <strong>Plataforma:</strong> ${Array.isArray(m.plataformas) ? m.plataformas.join(', ') : m.plataformas}<br>
-          <strong>Dispositivo:</strong> ${m.dispositivo_modelo}<br>
-          <strong>Android:</strong> ${m.android_versao} | <strong>App:</strong> ${m.app_versao}
+  const cols = Object.keys(dados[0]);
+  const colsVis = cols.slice(0,6); // max 6 colunas
+  
+  let html = `<table><tr>${colsVis.map(c=>`<th>${c}</th>`).join('')}<th>...</th></tr>`;
+  dados.forEach(row=>{
+    html += `<tr>${colsVis.map(c=>{
+      let v = row[c];
+      if(v===null||v===undefined) v='—';
+      else if(typeof v==='object') v=JSON.stringify(v).substring(0,50)+'...';
+      else if(String(v).length>60) v=String(v).substring(0,60)+'...';
+      return `<td>${v}</td>`;
+    }).join('')}<td><button class="btn btn-ghost btn-sm" onclick='verCompleto(${JSON.stringify(row)})'>Ver</button></td></tr>`;
+  });
+  html += '</table>';
+  document.getElementById('banco-resultado').innerHTML = html;
+}
+
+function verCompleto(row){
+  const html = Object.entries(row).map(([k,v])=>`
+    <div style="padding:6px 0;border-bottom:1px solid var(--borda);display:flex;gap:12px;">
+      <span style="font-size:10px;color:var(--txt3);min-width:150px;">${k}</span>
+      <span style="font-size:11px;color:var(--txt2);word-break:break-all;">${v===null?'—':typeof v==='object'?JSON.stringify(v):v}</span>
+    </div>
+  `).join('');
+  alert('Registro completo:\n' + JSON.stringify(row, null, 2));
+}
+
+async function carregarBancoResumo(){
+  const tabelas = ['linha_tempo_algoritmica','observacoes_pesquisador','fontes_enciclopedia','corridas_ofertadas','studio_feed','sugestoes_ia','dossies_camada3','indices_publicados','producoes_editoriais','tarifas_comparadas','anomalias','previsoes'];
+  let html = '';
+  for(const t of tabelas){
+    const c = await sbCount(t);
+    html += `<div class="kpi"><div class="kpi-label" style="font-size:9px;">${t}</div><div class="kpi-valor" style="font-size:18px;color:var(--azul3)">${c.toLocaleString('pt-BR')}</div></div>`;
+  }
+  document.getElementById('banco-resumo').innerHTML = html;
+}
+
+// ═══════════════════════════════════════
+// GEMINI COMANDO IA
+// ═══════════════════════════════════════
+async function carregarGeminiSugestoes(){
+  const dados = await sb('sugestoes_ia', 'select=*&order=created_at.desc&limit=10');
+  
+  const pendentes = dados.filter(d=>d.status==='pendente').length;
+  const executadas = dados.filter(d=>d.status==='executado').length;
+  
+  document.getElementById('gem-pendentes').textContent = pendentes;
+  document.getElementById('gem-executadas').textContent = executadas;
+  
+  if(dados.length){
+    document.getElementById('gem-ultimo').textContent = new Date(dados[0].created_at).toLocaleDateString('pt-BR');
+  }
+  
+  const pendList = dados.filter(d=>d.status==='pendente');
+  
+  if(!pendList.length){
+    document.getElementById('gemini-sugestoes').innerHTML = '<div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Nenhuma sugestão pendente. IAs rodam a cada 6h.</div>';
+    return;
+  }
+  
+  const cores = {pesquisa:'var(--azul3)',studio:'var(--verde)',comercial:'var(--amarelo)',grok_manual:'var(--roxo)',perplexity_manual:'var(--ciano)'};
+  
+  document.getElementById('gemini-sugestoes').innerHTML = pendList.map(s=>`
+    <div class="gemini-card">
+      <div class="gemini-tipo" style="color:${cores[s.tipo]||'var(--txt3)'}">
+        ${s.modulo_origem||'GeminiComandoIA'} — ${s.tipo?.toUpperCase()}
+        <span class="pill ${s.prioridade==='alta'?'tag-vermelho':s.prioridade==='media'?'tag-amarelo':'tag-cinza'}" style="margin-left:8px;">${s.prioridade}</span>
+      </div>
+      <div class="gemini-titulo">${s.titulo||'Sem título'}</div>
+      <div class="gemini-contexto">${s.contexto?.replace(/^"|"$/g,'')||'Sem contexto'}</div>
+      <div style="font-size:10px;color:var(--txt3);margin-bottom:4px;">PROMPT PARA O CLAUDE</div>
+      <div class="gemini-prompt">${s.prompt_claude?.replace(/^"|"$/g,'')||'—'}</div>
+      <div class="row-btns">
+        <button class="btn btn-primary btn-sm" onclick="copiarTexto('${encodeURIComponent(s.prompt_claude||'')}')">📋 Copiar Prompt</button>
+        <button class="btn btn-ghost btn-sm" onclick="marcarUsado('${s.id}')">✓ Marcar como usado</button>
+      </div>
+      ${s.resposta_claude?`<div style="margin-top:8px;padding:8px;background:var(--bg);border-radius:6px;font-size:11px;color:var(--verde);">✓ Resposta do Claude recebida</div>`:''}
+    </div>
+  `).join('');
+  
+  // Select de IDs
+  const sel = document.getElementById('gem-sel-id');
+  sel.innerHTML = '<option value="">Selecionar sugestão...</option>' + pendList.map(s=>`<option value="${s.id}">${s.titulo||s.id}</option>`).join('');
+}
+
+async function marcarUsado(id){
+  await fetch(`${SB_URL}/rest/v1/sugestoes_ia?id=eq.${id}`,{method:'PATCH',headers:HDRS,body:JSON.stringify({status:'executado',utilizado_em:new Date().toISOString()})});
+  carregarGeminiSugestoes();
+}
+
+async function salvarRespostaGemini(){
+  const id = document.getElementById('gem-sel-id').value;
+  const resp = document.getElementById('gem-resposta').value;
+  if(!id||!resp) return;
+  await fetch(`${SB_URL}/rest/v1/sugestoes_ia?id=eq.${id}`,{method:'PATCH',headers:HDRS,body:JSON.stringify({resposta_claude:resp,status:'aprovado'})});
+  alert('Resposta salva!');
+  carregarGeminiSugestoes();
+}
+
+// ═══════════════════════════════════════
+// GROK & PERPLEXITY
+// ═══════════════════════════════════════
+async function carregarGrokPrompts(){
+  const dados = await sb('sugestoes_ia', 'select=*&status=eq.pendente&order=created_at.desc&limit=5');
+  
+  const grok = dados.find(d=>d.tipo==='grok_manual');
+  const perp = dados.find(d=>d.tipo==='perplexity_manual');
+  
+  document.getElementById('grok-prompt-atual').textContent = 
+    grok ? grok.prompt_claude?.replace(/^"|"$/g,'') : 'Nenhum prompt disponível. IAs rodam a cada 6h.';
+  
+  document.getElementById('perplexity-prompt-atual').textContent = 
+    perp ? perp.prompt_claude?.replace(/^"|"$/g,'') : 'Nenhum prompt disponível. IAs rodam a cada 6h.';
+}
+
+function copiarPrompt(tipo){
+  const el = document.getElementById(tipo+'-prompt-atual');
+  navigator.clipboard.writeText(el.textContent);
+  alert('Prompt copiado!');
+}
+
+function copiarTexto(encoded){
+  navigator.clipboard.writeText(decodeURIComponent(encoded));
+  alert('Prompt copiado!');
+}
+
+async function salvarResultado(tipo){
+  const resultado = document.getElementById(tipo+'-resultado').value;
+  if(!resultado) return;
+  await fetch(`${SB_URL}/rest/v1/sugestoes_ia`,{method:'POST',headers:{...HDRS,'Prefer':'return=minimal'},body:JSON.stringify({tipo:tipo+'_resultado',titulo:`Resultado ${tipo} — ${new Date().toLocaleDateString('pt-BR')}`,contexto:resultado,status:'recebido',created_at:new Date().toISOString()})});
+  alert('Resultado salvo! IAs vão analisar no próximo ciclo.');
+}
+
+// ═══════════════════════════════════════
+// ALIMENTAÇÃO MANUAL
+// ═══════════════════════════════════════
+async function enviarAlimentacao(tipo){
+  let dados = {};
+  if(tipo==='link'){
+    const url = document.getElementById('feed-url').value;
+    const desc = document.getElementById('feed-url-desc').value;
+    const ia = document.getElementById('feed-url-ia').value;
+    if(!url) return alert('Informe a URL');
+    dados = {tipo:'alimentacao_link',titulo:`Link: ${url}`,contexto:JSON.stringify({url,descricao:desc,ia_destino:ia}),status:'pendente',created_at:new Date().toISOString()};
+  } else if(tipo==='texto'){
+    const txt = document.getElementById('feed-texto-body').value;
+    if(!txt) return alert('Informe o texto');
+    dados = {tipo:'alimentacao_texto',titulo:`Texto manual — ${new Date().toLocaleDateString('pt-BR')}`,contexto:txt.substring(0,500),status:'pendente',created_at:new Date().toISOString()};
+  } else if(tipo==='informe'){
+    const titulo = document.getElementById('feed-inf-titulo').value;
+    const body = document.getElementById('feed-inf-body').value;
+    const urg = document.getElementById('feed-inf-urgencia').value;
+    dados = {tipo:'alimentacao_informe',titulo:titulo||'Informe manual',contexto:body,prioridade:urg==='urgente'?'alta':'media',status:'pendente',created_at:new Date().toISOString()};
+  }
+  
+  await fetch(`${SB_URL}/rest/v1/sugestoes_ia`,{method:'POST',headers:{...HDRS,'Prefer':'return=minimal'},body:JSON.stringify(dados)});
+  alert('Enviado! IAs vão processar no próximo ciclo (6h).');
+}
+
+// ═══════════════════════════════════════
+// KELLY
+// ═══════════════════════════════════════
+async function carregarRelatos(){
+  const dados = await sb('observacoes_pesquisador', 'select=titulo,descricao,status,camada,prioridade,created_at&order=created_at.desc&limit=20');
+  
+  if(!dados.length){
+    document.getElementById('kelly-relatos-lista').innerHTML = '<div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Nenhum relato encontrado</div>';
+    return;
+  }
+  
+  const html = dados.map(r=>`
+    <div class="journal-item camada-${r.camada||1}">
+      <div class="journal-meta">
+        <span class="pill ${r.camada==1?'tag-verde':r.camada==2?'tag-amarelo':r.camada==3?'tag-vermelho':'tag-cinza'}">
+          ${r.camada==1?'🟢':r.camada==2?'🟡':r.camada==3?'🔴':'⚫'} Camada ${r.camada}
+        </span>
+        <span>${r.status||'—'}</span>
+        <span>${new Date(r.created_at).toLocaleDateString('pt-BR')}</span>
+      </div>
+      <div class="journal-titulo">${r.titulo||'Sem título'}</div>
+      <div class="journal-body">${(r.descricao||'').substring(0,200)}${r.descricao?.length>200?'...':''}</div>
+      <div class="row-btns" style="margin-top:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="verRelato('${encodeURIComponent(JSON.stringify(r))}')">Ver completo</button>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">Imprimir</button>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('kelly-relatos-lista').innerHTML = html;
+}
+
+function verRelato(enc){
+  const r = JSON.parse(decodeURIComponent(enc));
+  alert(`${r.titulo}\n\n${r.descricao}\n\nStatus: ${r.status}\nCamada: ${r.camada}`);
+}
+
+// ═══════════════════════════════════════
+// JOURNAL
+// ═══════════════════════════════════════
+async function carregarJournal(){
+  const dados = await sb('producoes_editoriais', 'select=*&order=created_at.desc&limit=15');
+  
+  if(!dados.length){
+    document.getElementById('journal-lista').innerHTML = '<div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Nenhuma entrada no journal ainda</div>';
+    return;
+  }
+  
+  document.getElementById('journal-lista').innerHTML = dados.map(p=>`
+    <div class="journal-item">
+      <div class="journal-meta">
+        <span class="pill tag-azul">${p.formato||'editorial'}</span>
+        <span>${new Date(p.created_at).toLocaleDateString('pt-BR')}</span>
+      </div>
+      <div class="journal-titulo">${p.titulo||'Sem título'}</div>
+      <div class="journal-body">${(p.conteudo||'').substring(0,200)}...</div>
+    </div>
+  `).join('');
+}
+
+function salvarEntrada(){alert('Funcionalidade em desenvolvimento');}
+function enviarStudio(){alert('Enviando para Studio Feed...');}
+function marcarEmbargo(){alert('Marcado como embargo jurídico');}
+
+// ═══════════════════════════════════════
+// SINAIS EXTERNOS
+// ═══════════════════════════════════════
+async function carregarSinais(tipo){
+  const dados = await sb('observacoes_pesquisador', `select=titulo,descricao,categoria,status,created_at&categoria=eq.regulatorio_legislativo&order=created_at.desc&limit=10`);
+  const el = document.getElementById('sinais-reg-lista');
+  if(!el) return;
+  
+  if(!dados.length){
+    el.innerHTML = '<div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Nenhum sinal regulatório recente</div>';
+    return;
+  }
+  
+  el.innerHTML = dados.map(s=>`
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">${s.titulo}</div>
+          <div style="font-size:11px;color:var(--txt2);">${(s.descricao||'').substring(0,150)}...</div>
+        </div>
+        <div style="margin-left:12px;min-width:80px;text-align:right;">
+          <div style="font-size:10px;color:var(--txt3);">${new Date(s.created_at).toLocaleDateString('pt-BR')}</div>
         </div>
       </div>
-    `;
-  }).join('');
-  
-  lista.innerHTML = html;
-  document.getElementById('k-online').textContent = motoristas.filter(m => m.is_online).length;
+    </div>
+  `).join('');
 }
 
-function atualizarLaboratorio() {
-  const lista = document.getElementById('lab-lista');
-  const sementes = Object.values(sementesCache);
+async function salvarSinal(){
+  const titulo = document.getElementById('sinal-titulo').value;
+  const desc = document.getElementById('sinal-desc').value;
+  const tipo = document.getElementById('sinal-tipo').value;
+  const intencao = document.getElementById('sinal-intencao').value;
   
-  if (sementes.length === 0) {
-    lista.innerHTML = '<div class="empty-state">Nenhuma semente em processamento</div>';
-    return;
-  }
+  if(!titulo) return alert('Informe o título do sinal');
   
-  const estadoIcon = {
-    'SEMENTE': '🌱',
-    'GERMINANDO': '🌿',
-    'AMADURECENDO': '🌾',
-    'COLHEITA': '🌽',
-    'COMPOSTO': '♻️'
+  await fetch(`${SB_URL}/rest/v1/observacoes_pesquisador`,{method:'POST',headers:{...HDRS,'Prefer':'return=minimal'},body:JSON.stringify({
+    titulo,descricao:desc,categoria:'regulatorio_legislativo',
+    status:'em_investigacao',plataforma:'ambas',camada:2,
+    ia_responsavel:'Manual_'+usuarioAtual,
+    data_observacao:new Date().toISOString()
+  })});
+  alert('Sinal salvo!');
+  document.getElementById('sinal-titulo').value='';
+  document.getElementById('sinal-desc').value='';
+}
+
+// ═══════════════════════════════════════
+// RELATÓRIOS
+// ═══════════════════════════════════════
+async function carregarRelatorios(){
+  const dados = await sb('producoes_editoriais', 'select=*&order=created_at.desc&limit=15');
+  const indices = await sb('indices_publicados', 'select=*&order=created_at.desc&limit=5');
+  
+  document.getElementById('rel-resumo').innerHTML = `
+    Produções editoriais: <strong>${dados.length}</strong><br>
+    Índices publicados: <strong>${indices.length}</strong>
+  `;
+  
+  const html = [...indices.map(i=>({...i,_tipo:'indice'})), ...dados].slice(0,15).map(r=>`
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">${r.titulo||'Sem título'}</div>
+          <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;">${(r.conteudo||r.descricao||'').substring(0,200)}...</div>
+          <div class="row-btns">
+            <button class="btn btn-ghost btn-sm" onclick="alert('${encodeURIComponent(JSON.stringify(r))}')">Ver completo</button>
+            <button class="btn btn-primary btn-sm" onclick="window.print()">Imprimir</button>
+          </div>
+        </div>
+        <div style="margin-left:12px;min-width:90px;text-align:right;">
+          <span class="pill ${r._tipo==='indice'?'tag-azul':'tag-roxo'}">${r._tipo==='indice'?'Índice':'Editorial'}</span>
+          <div style="font-size:10px;color:var(--txt3);margin-top:4px;">${new Date(r.created_at).toLocaleDateString('pt-BR')}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('relatorios-lista').innerHTML = html || '<div style="color:var(--txt3);font-size:11px;text-align:center;padding:20px;">Nenhum relatório encontrado</div>';
+}
+
+// ═══════════════════════════════════════
+// LABORATÓRIO
+// ═══════════════════════════════════════
+async function carregarLaboratorio(){
+  const dados = await sb('observacoes_pesquisador', 'select=titulo,status,prioridade,created_at&order=created_at.desc&limit=50');
+  
+  const stages = {
+    semente: dados.filter(d=>d.prioridade>=3),
+    germinando: dados.filter(d=>d.prioridade==2),
+    amadurecendo: dados.filter(d=>d.prioridade==1&&d.status==='em_investigacao'),
+    colhido: dados.filter(d=>d.status==='confirmado'),
+    reaproveitado: []
   };
   
-  let html = sementes.map(s => {
-    const icon = estadoIcon[s.estado_metabolico] || '?';
-    const conteudo = (s.conteudo_bruto || '').substring(0, 60) + '...';
-    return `
-      <div class="semente-item">
-        <div class="semente-titulo">${icon} ${s.estado_metabolico}</div>
-        <div class="semente-status">${conteudo}</div>
-        <div class="semente-progress">
-          <div class="semente-fill" style="width:${s.progresso}%"></div>
-        </div>
+  document.getElementById('lab-semente').textContent = stages.semente.length;
+  document.getElementById('lab-germinando').textContent = stages.germinando.length;
+  document.getElementById('lab-amadurecendo').textContent = stages.amadurecendo.length;
+  document.getElementById('lab-colhido').textContent = stages.colhido.length;
+  
+  Object.entries(stages).forEach(([stage, items])=>{
+    const el = document.getElementById('lab-col-'+stage);
+    if(!el) return;
+    if(!items.length){
+      el.innerHTML = '<div style="font-size:10px;color:var(--txt3);text-align:center;padding:8px;">Vazio</div>';
+      return;
+    }
+    el.innerHTML = items.slice(0,5).map(i=>`
+      <div class="lab-card">
+        <div style="font-size:11px;color:var(--txt);">${(i.titulo||'').substring(0,60)}</div>
+        <div style="font-size:10px;color:var(--txt3);margin-top:2px;">${new Date(i.created_at).toLocaleDateString('pt-BR')}</div>
       </div>
-    `;
-  }).join('');
-  
-  lista.innerHTML = html;
-  document.getElementById('k-sementes').textContent = sementes.length;
+    `).join('') + (items.length>5?`<div style="font-size:10px;color:var(--txt3);text-align:center;">+${items.length-5} mais</div>`:'');
+  });
 }
 
-function atualizarKPIs() {
-  const sementes = Object.values(sementesCache);
-  const colheita = sementes.filter(s => s.estado_metabolico === 'COLHEITA').length;
-  const taxa = sementes.length > 0 ? Math.round((colheita / sementes.length) * 100) : 0;
+// ═══════════════════════════════════════
+// INICIALIZAR
+// ═══════════════════════════════════════
+
+async function carregarMotoristasOnline(){
+  const dados = await sb('motoristas', 'select=id,cidade,estado,plataformas,dispositivo_modelo,android_versao,ativo,status_assinatura,updated_at&order=updated_at.desc&limit=20');
   
-  document.getElementById('k-taxa').textContent = taxa + '%';
-  document.getElementById('k-tempo').textContent = '~12m';
+  document.getElementById('k-motoristas').textContent = dados.filter(d=>d.ativo).length || '0';
+  
+  if(!dados.length){
+    document.getElementById('motoristas-online').innerHTML = '<div style="color:var(--txt3);font-size:11px;text-align:center;padding:16px;">Nenhum motorista cadastrado ainda</div>';
+    return;
+  }
+  
+  const html = `<table>
+    <tr><th>ID</th><th>Cidade</th><th>Plataformas</th><th>Dispositivo</th><th>Android</th><th>Status</th><th>Ativo</th></tr>
+    ${dados.map(m=>`
+    <tr>
+      <td class="mono" style="font-size:10px;">${m.id?.substring(0,8)}...</td>
+      <td>${m.cidade||'—'} ${m.estado||''}</td>
+      <td>${Array.isArray(m.plataformas)?m.plataformas.join(', '):(m.plataformas||'—')}</td>
+      <td style="font-size:10px;">${m.dispositivo_modelo||'—'}</td>
+      <td style="font-size:10px;">${m.android_versao||'—'}</td>
+      <td><span class="pill ${m.status_assinatura==='ativo'?'tag-verde':'tag-cinza'}">${m.status_assinatura||'—'}</span></td>
+      <td><span class="semaforo ${m.ativo?'pulso':''}" style="background:${m.ativo?'var(--verde)':'var(--txt3)'}"></span></td>
+    </tr>
+    `).join('')}
+  </table>`;
+  
+  document.getElementById('motoristas-online').innerHTML = html;
 }
 
-// Carregar ao abrir
-window.addEventListener('load', () => {
-  console.log('✅ Painel Mobile carregado');
-});
+function inicializar(){
+  carregarSaude();
+  carregarIAs();
+  carregarBancoResumo();
+}
+
+function adicionarSegmento(){alert('Segmento adicionado');}
+function adicionarEntrada(){alert('Funcionalidade em desenvolvimento');}
+function adicionarDespesa(){alert('Funcionalidade em desenvolvimento');}
+function editarEntrada(tipo){alert('Editar entrada: '+tipo);}
 </script>
 </body>
 </html>
